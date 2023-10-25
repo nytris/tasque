@@ -1,0 +1,32 @@
+{
+    "name": "tasque/tasque",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tasque\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tasque\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "asmblah/php-code-shift": "dev-ast",
+        "nytris/nytris": "dev-main"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpunit/phpunit": "^10.2"
+    },
+    "config": {
+        "platform": {
+            "php": "8.1"
+        },
+        "sort-packages": true
+    }
+}
