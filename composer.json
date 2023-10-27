@@ -14,7 +14,7 @@
     },
     "require": {
         "php": ">=8.1",
-        "asmblah/php-code-shift": "dev-ast",
+        "asmblah/php-code-shift": "^0.1",
         "nytris/nytris": "dev-main"
     },
     "require-dev": {

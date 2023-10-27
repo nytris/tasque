@@ -21,7 +21,7 @@ Install this package with Composer:
 $ composer install tasque/tasque
 ```
 
-### Starting a thread
+Configure Nytris platform:
 
 `nytris.config.php`
 
@@ -40,6 +40,8 @@ $bootConfig->installPackage(Tasque::class);
 
 return $bootConfig;
 ```
+
+### Starting a thread
 
 `index.php`
 

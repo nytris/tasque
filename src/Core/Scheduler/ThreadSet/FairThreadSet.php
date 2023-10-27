@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Scheduler\ThreadSet;
 
+use LogicException;
 use SplObjectStorage;
 use SplQueue;
 use Tasque\Core\Thread\BackgroundThreadInterface;
@@ -33,6 +34,7 @@ class FairThreadSet implements ThreadSetInterface
      * @var SplObjectStorage<ThreadInterface, ThreadInterface>
      */
     private SplObjectStorage $joinedThreadMap;
+    private MainThread $mainThread;
     /**
      * @var SplQueue<ThreadInterface>
      */
@@ -44,7 +46,8 @@ class FairThreadSet implements ThreadSetInterface
         $this->threadQueue = new SplQueue();
 
         // Create the special representation of the main thread for scheduling.
-        $this->currentThread = new MainThread();
+        $this->mainThread = new MainThread();
+        $this->currentThread = $this->mainThread;
     }
 
     /**
@@ -93,6 +96,7 @@ class FairThreadSet implements ThreadSetInterface
             // as all scheduling must happen from there.
             $this->currentThread->switchFrom();
 
+            // At this point, the background thread suspended just above will have been resumed.
             return;
         }
 
@@ -100,36 +104,29 @@ class FairThreadSet implements ThreadSetInterface
             // Dequeue the next thread.
             $newThread = $this->dequeueNextThread();
 
-            if ($newThread === null) {
-                // No other thread is available to be scheduled.
-                return;
-            }
-
-            $mainThread = $this->currentThread;
-
-            // Enqueue the previous thread again at the end of the queue for next time.
-//            $this->threadQueue->enqueue($mainThread);
-
             $this->currentThread = $newThread;
 
             $newThread->switchTo();
 
             // Once control returns to this point, we must be back in the main thread.
-            $this->currentThread = $mainThread;
 
             // Continue processing background threads while the main thread waits on any it has joined.
-        } while ($this->joinedThreadMap->contains($mainThread));
+        } while (!$newThread->isMainThread());
     }
 
     /**
      * Fetches the next thread from the thread queue that is ready to be scheduled, if any.
      */
-    private function dequeueNextThread(): ?ThreadInterface
+    private function dequeueNextThread(): ThreadInterface
     {
-        foreach ($this->threadQueue as $nextThread) {
+        // Add the current thread to the back of the queue for next time.
+        $this->threadQueue->enqueue($this->currentThread);
+
+        while (!$this->threadQueue->isEmpty()) {
+            $nextThread = $this->threadQueue->dequeue();
+
             if ($nextThread->isTerminated()) {
-                // Thread has terminated; remove it from the queue and move to the next one, if any.
-                $this->threadQueue->shift();
+                // Thread has terminated; leave it removed from the queue and move to the next one, if any.
                 $this->joinedThreadMap->detach($nextThread);
 
                 continue;
@@ -137,23 +134,22 @@ class FairThreadSet implements ThreadSetInterface
 
             if (!$this->joinedThreadMap->contains($nextThread)) {
                 // Thread is not waiting on any other thread, so it can be scheduled.
-                $this->threadQueue->shift();
-                $this->threadQueue->enqueue($nextThread);
-
                 return $nextThread;
             }
 
             $joinedThread = $this->joinedThreadMap[$nextThread];
 
             if ($joinedThread->isTerminated()) {
-                $this->threadQueue->shift();
-                $this->threadQueue->enqueue($nextThread);
+                // The thread being waited on has now terminated, so the waiter is now free to be scheduled.
                 $this->joinedThreadMap->detach($nextThread);
 
                 return $nextThread;
             }
+
+            // Add the thread to the back of the queue for next time.
+            $this->threadQueue->enqueue($nextThread);
         }
 
-        return null; // No other thread is available to be scheduled.
+        throw new LogicException('No thread is available to be scheduled.');
     }
 }

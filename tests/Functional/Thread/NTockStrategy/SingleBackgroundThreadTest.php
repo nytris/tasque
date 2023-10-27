@@ -62,22 +62,28 @@ class SingleBackgroundThreadTest extends AbstractTestCase
         static::assertEquals(
             [
                 'Start',
+                'Start of main thread run',
                 'Before background thread start',
                 'After background thread start',
 
-                'Foreground loop iteration #0',
+                'Main thread loop iteration #0',
+
+                'Start of background thread run',
+
                 // Main thread (foreground) and background threads are then scheduled evenly.
-                'Foreground loop iteration #1',
-                'Background loop iteration #0',
-                'Foreground loop iteration #2',
-                'Background loop iteration #1',
-                'Foreground loop iteration #3',
+                'Main thread loop iteration #1',
+                'Background thread loop iteration #0',
+                'Main thread loop iteration #2',
+                'Background thread loop iteration #1',
+                'Main thread loop iteration #3',
 
                 // Once joined, the main thread will wait for the background thread to complete before continuing.
                 'Before join',
-                'Background loop iteration #2',
-                'Background loop iteration #3',
+                'Background thread loop iteration #2',
+                'Background thread loop iteration #3',
+                'End of background thread run',
                 'After join',
+                'End of main thread run',
             ],
             $this->log->getLog()
         );

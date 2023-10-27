@@ -34,6 +34,8 @@ class SimpleMainThread
 
     public function run(): void
     {
+        $this->log->log('Start of main thread run');
+
         $backgroundThread = $this->tasque->createThread((new SimpleBackgroundThread($this->log))->run(...));
 
         $this->log->log('Before background thread start');
@@ -41,11 +43,13 @@ class SimpleMainThread
         $this->log->log('After background thread start');
 
         for ($i = 0; $i < 4; $i++) {
-            $this->log->log('Foreground loop iteration #' . $i);
+            $this->log->log('Main thread loop iteration #' . $i);
         }
 
         $this->log->log('Before join');
         $backgroundThread->join();
         $this->log->log('After join');
+
+        $this->log->log('End of main thread run');
     }
 }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tasque\Core;
 
+use Asmblah\PhpCodeShift\CodeShift;
+use Asmblah\PhpCodeShift\CodeShiftInterface;
 use LogicException;
 use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Bootstrap\BootstrapInterface;
@@ -35,6 +37,7 @@ use Tasque\Core\Scheduler\ThreadSet\FairThreadSet;
 class Shared
 {
     private static ?BootstrapInterface $bootstrap = null;
+    private static ?CodeShiftInterface $codeShift = null;
     private static ?SchedulerInterface $scheduler = null;
     private static ?StrategyInterface $schedulerStrategy = null;
 
@@ -44,10 +47,22 @@ class Shared
     public static function getBootstrap(): BootstrapInterface
     {
         if (self::$bootstrap === null) {
-            self::$bootstrap = new Bootstrap();
+            self::$bootstrap = new Bootstrap(self::getCodeShift());
         }
 
         return self::$bootstrap;
+    }
+
+    /**
+     * Fetches the configured CodeShift. Will create one by default if not overridden.
+     */
+    public static function getCodeShift(): CodeShiftInterface
+    {
+        if (self::$codeShift === null) {
+            self::$codeShift = new CodeShift();
+        }
+
+        return self::$codeShift;
     }
 
     /**
@@ -82,6 +97,16 @@ class Shared
     public static function setBootstrap(?BootstrapInterface $bootstrap): void
     {
         self::$bootstrap = $bootstrap;
+    }
+
+    /**
+     * Overrides the CodeShift to use.
+     *
+     * If null is given, the default implementation will be used.
+     */
+    public static function setCodeShift(?CodeShiftInterface $codeShift): void
+    {
+        self::$codeShift = $codeShift;
     }
 
     /**

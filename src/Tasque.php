@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque;
 
+use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
 use Fiber;
 use Nytris\Core\Package\PackageConfigInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
@@ -45,6 +46,14 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
+    public function excludeFiles(FileFilterInterface $fileFilter): void
+    {
+        Shared::getCodeShift()->deny($fileFilter);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getName(): string
     {
         return 'tasque';
@@ -69,9 +78,17 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
-    public static function setSchedulerStrategy(StrategyInterface $strategy): void
+    public static function setSchedulerStrategy(?StrategyInterface $strategy): void
     {
         Shared::setSchedulerStrategy($strategy);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function switchContext(): void
+    {
+        Shared::getScheduler()->switchContext();
     }
 
     /**
@@ -80,5 +97,8 @@ class Tasque implements TasqueInterface
     public static function uninstall(): void
     {
         Shared::getBootstrap()->uninstall();
+
+        Shared::setScheduler(null);
+        Shared::setSchedulerStrategy(null);
     }
 }

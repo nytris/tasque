@@ -29,8 +29,12 @@ class SimpleBackgroundThread
 
     public function run(): void
     {
+        $this->log->log('Start of background thread run');
+
         for ($i = 0; $i < 4; $i++) {
-            $this->log->log('Background loop iteration #' . $i);
+            $this->log->log('Background thread loop iteration #' . $i);
         }
+
+        $this->log->log('End of background thread run');
     }
 }

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Bootstrap;
 
-use Asmblah\PhpCodeShift\CodeShift;
 use Asmblah\PhpCodeShift\CodeShiftInterface;
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilter;
 use Asmblah\PhpCodeShift\Shifter\Shift\Shift\Tock\TockStatementShiftSpec;
@@ -32,13 +31,9 @@ use Tasque\Core\Marshaller\Marshaller;
  */
 class Bootstrap implements BootstrapInterface
 {
-    private readonly CodeShiftInterface $codeShift;
-
     public function __construct(
-        ?CodeShiftInterface $codeShift = null
+        private readonly CodeShiftInterface $codeShift
     ) {
-        $this->codeShift = $codeShift ?? new CodeShift();
-
         // Exclude Tasque itself from having tock hooks applied.
         $this->codeShift->deny(new FileFilter(dirname(__DIR__, 3) . '/src/**'));
     }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Tasque\Tests\Functional\Thread\ManualStrategy;
 
 use Tasque\Core\Scheduler\ContextSwitch\ManualStrategy;
-use Tasque\Core\Scheduler\SchedulerInterface;
 use Tasque\Core\Shared;
 use Tasque\Tasque;
 use Tasque\Tests\AbstractTestCase;
@@ -30,7 +29,6 @@ class SingleBackgroundThreadTest extends AbstractTestCase
      * @var string[]
      */
     private array $log = [];
-    private SchedulerInterface $scheduler;
     private Tasque $tasque;
 
     public function setUp(): void
@@ -39,7 +37,6 @@ class SingleBackgroundThreadTest extends AbstractTestCase
 
         Shared::setScheduler(null);
         Shared::setSchedulerStrategy(new ManualStrategy());
-        $this->scheduler = Shared::getScheduler();
     }
 
     public function tearDown(): void
@@ -58,7 +55,7 @@ class SingleBackgroundThreadTest extends AbstractTestCase
 
                 if ($i >= 1) {
                     $this->log[] = 'Before switch during loop iteration #' . $i;
-                    $this->scheduler->switchContext();
+                    Tasque::switchContext();
                     $this->log[] = 'After switch during loop iteration #' . $i;
                 }
             }
@@ -69,7 +66,7 @@ class SingleBackgroundThreadTest extends AbstractTestCase
         $this->log[] = 'After start';
 
         $this->log[] = 'Before initial switch';
-        $this->scheduler->switchContext();
+        Tasque::switchContext();
         $this->log[] = 'After initial switch';
 
         $this->log[] = 'Before join';

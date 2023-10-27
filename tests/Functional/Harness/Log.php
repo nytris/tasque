@@ -40,4 +40,3 @@ class Log
         $this->log[] = $message;
     }
 }
-
