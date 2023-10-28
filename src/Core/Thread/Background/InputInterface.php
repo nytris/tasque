@@ -11,17 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Thread\State;
-
-use Tasque\Core\Thread\Control\ExternalControlInterface;
+namespace Tasque\Core\Thread\Background;
 
 /**
- * Interface BackgroundThreadStateInterface.
+ * Interface InputInterface.
  *
- * Encapsulates the state of a background green thread.
+ * Encapsulates an input argument for the thread.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface BackgroundThreadStateInterface extends ExternalControlInterface, ThreadStateInterface
+interface InputInterface
 {
+    /**
+     * Fetches the input value.
+     */
+    public function getValue(): mixed;
 }

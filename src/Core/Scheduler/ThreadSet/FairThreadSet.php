@@ -16,7 +16,7 @@ namespace Tasque\Core\Scheduler\ThreadSet;
 use LogicException;
 use SplObjectStorage;
 use SplQueue;
-use Tasque\Core\Thread\BackgroundThreadInterface;
+use Tasque\Core\Thread\Background\BackgroundThreadInterface;
 use Tasque\Core\Thread\MainThread;
 use Tasque\Core\Thread\ThreadInterface;
 

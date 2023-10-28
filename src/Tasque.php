@@ -18,7 +18,9 @@ use Fiber;
 use Nytris\Core\Package\PackageConfigInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Shared;
-use Tasque\Core\Thread\BackgroundThread;
+use Tasque\Core\Thread\Background\BackgroundThread;
+use Tasque\Core\Thread\Background\Input;
+use Tasque\Core\Thread\Background\InputInterface;
 use Tasque\Core\Thread\State\BackgroundThreadState;
 use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
 
@@ -34,11 +36,15 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
-    public function createThread(callable $callback): BackgroundThreadStateInterface
+    public function createThread(callable $callback, ?InputInterface $input = null): BackgroundThreadStateInterface
     {
         $scheduler = Shared::getScheduler();
 
-        $thread = new BackgroundThread($scheduler->getThreadSet(), new Fiber($callback));
+        $thread = new BackgroundThread(
+            $scheduler->getThreadSet(),
+            new Fiber($callback),
+            $input ?? new Input(null)
+        );
 
         return new BackgroundThreadState($thread);
     }

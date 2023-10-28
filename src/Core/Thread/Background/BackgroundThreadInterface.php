@@ -11,7 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Thread;
+namespace Tasque\Core\Thread\Background;
+
+use Tasque\Core\Thread\Control\ExternalControlInterface;
+use Tasque\Core\Thread\Control\InternalControlInterface;
+use Tasque\Core\Thread\ThreadInterface;
 
 /**
  * Interface BackgroundThreadInterface.
@@ -20,6 +24,6 @@ namespace Tasque\Core\Thread;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface BackgroundThreadInterface extends BackgroundThreadControlInterface, ThreadInterface
+interface BackgroundThreadInterface extends ExternalControlInterface, InternalControlInterface, ThreadInterface
 {
 }

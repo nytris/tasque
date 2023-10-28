@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Thread\State;
 
-use Tasque\Core\Thread\BackgroundThreadInterface;
+use Tasque\Core\Thread\Background\BackgroundThreadInterface;
 use Throwable;
 
 /**

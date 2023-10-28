@@ -11,25 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Thread;
+namespace Tasque\Core\Thread\Control;
 
 /**
- * Interface BackgroundThreadControlInterface.
+ * Interface ControlInterface.
  *
- * Controls a background thread.
+ * Controls a thread.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface BackgroundThreadControlInterface
+interface ControlInterface
 {
     /**
      * Makes the current thread wait for this thread to complete before continuing.
      */
     public function join(): void;
-
-    /**
-     * Starts the thread. Note that this does not necessarily interrupt the running one,
-     * depending on the scheduler strategy in use.
-     */
-    public function start(): void;
 }

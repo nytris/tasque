@@ -16,6 +16,7 @@ namespace Tasque;
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
 use Nytris\Core\Package\PackageInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
+use Tasque\Core\Thread\Background\InputInterface;
 use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
 
 /**
@@ -29,8 +30,10 @@ interface TasqueInterface extends PackageInterface
 {
     /**
      * Creates but does not yet start a background thread.
+     *
+     * Optionally, an input to the thread may be specified.
      */
-    public function createThread(callable $callback): BackgroundThreadStateInterface;
+    public function createThread(callable $callback, ?InputInterface $input = null): BackgroundThreadStateInterface;
 
     /**
      * Excludes the given files from being transpiled with tock handling.

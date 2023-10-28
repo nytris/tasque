@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Thread;
+namespace Tasque\Core\Thread\Background;
 
 use Fiber;
 use LogicException;
@@ -20,6 +20,8 @@ use Tasque\Core\Exception\ThreadDidNotThrowException;
 use Tasque\Core\Exception\ThreadNotTerminatedException;
 use Tasque\Core\Exception\ThreadTerminatedException;
 use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
+use Tasque\Core\Thread\Control\BackgroundThreadControl;
+use Tasque\Core\Thread\Control\InternalControlInterface;
 use Throwable;
 
 /**
@@ -35,12 +37,22 @@ class BackgroundThread implements BackgroundThreadInterface
 
     /**
      * @param ThreadSetInterface $threadSet
-     * @param Fiber<mixed, mixed, mixed, mixed> $fiber
+     * @param Fiber<InternalControlInterface, mixed, mixed, mixed> $fiber
+     * @param InputInterface $input
      */
     public function __construct(
         private readonly ThreadSetInterface $threadSet,
-        private readonly Fiber $fiber
+        private readonly Fiber $fiber,
+        private readonly InputInterface $input
     ) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInput(): InputInterface
+    {
+        return $this->input;
     }
 
     /**
@@ -90,7 +102,7 @@ class BackgroundThread implements BackgroundThreadInterface
     {
         // Even if the thread's fiber has not yet been started by the scheduler,
         // consider it running unless it has already terminated.
-        return $this->fiber->isTerminated();
+        return !$this->fiber->isTerminated();
     }
 
     /**
@@ -140,8 +152,10 @@ class BackgroundThread implements BackgroundThreadInterface
     public function switchTo(): void
     {
         if (!$this->fiber->isStarted()) {
+            $threadControl = new BackgroundThreadControl($this);
+
             try {
-                $this->fiber->start();
+                $this->fiber->start($threadControl);
             } catch (Throwable $throwable) {
                 // Record the throw, but do not rethrow it.
                 $this->resultThrowable = $throwable;
