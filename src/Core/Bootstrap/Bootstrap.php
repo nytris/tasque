@@ -21,6 +21,8 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use Tasque\Core\Marshaller\Marshaller;
+use Tasque\Core\Shared;
+use Tasque\TasquePackageInterface;
 
 /**
  * Class Bootstrap.
@@ -41,7 +43,7 @@ class Bootstrap implements BootstrapInterface
     /**
      * @inheritDoc
      */
-    public function install(): void
+    public function install(TasquePackageInterface $packageConfig): void
     {
         $this->codeShift->install();
 
@@ -56,6 +58,12 @@ class Bootstrap implements BootstrapInterface
                 )
             )
         );
+
+        $schedulerStrategy = $packageConfig->getSchedulerStrategy();
+
+        if ($schedulerStrategy !== null) {
+            Shared::setSchedulerStrategy($schedulerStrategy);
+        }
     }
 
     /**

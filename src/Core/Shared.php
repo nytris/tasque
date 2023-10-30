@@ -15,7 +15,6 @@ namespace Tasque\Core;
 
 use Asmblah\PhpCodeShift\CodeShift;
 use Asmblah\PhpCodeShift\CodeShiftInterface;
-use LogicException;
 use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Bootstrap\BootstrapInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
@@ -126,10 +125,7 @@ class Shared
      */
     public static function setSchedulerStrategy(?StrategyInterface $strategy): void
     {
-        if (self::$scheduler !== null) {
-            throw new LogicException('Cannot set scheduler strategy while a scheduler is set');
-        }
-
+        self::$scheduler = null;
         self::$schedulerStrategy = $strategy;
     }
 }

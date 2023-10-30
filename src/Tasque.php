@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Tasque;
 
+use Asmblah\PhpCodeShift\Shifter\Filter\FileFilter;
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
+use Composer\InstalledVersions;
 use Fiber;
-use Nytris\Core\Package\PackageConfigInterface;
-use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
+use InvalidArgumentException;
+use Nytris\Core\Package\PackageContextInterface;
+use Nytris\Core\Package\PackageInterface;
 use Tasque\Core\Shared;
 use Tasque\Core\Thread\Background\BackgroundThread;
 use Tasque\Core\Thread\Background\Input;
@@ -52,7 +55,17 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
-    public function excludeFiles(FileFilterInterface $fileFilter): void
+    public static function excludeComposerPackage(string $packageName): void
+    {
+        $packageInstallPath = realpath(InstalledVersions::getInstallPath($packageName));
+
+        self::excludeFiles(new FileFilter($packageInstallPath . '/**'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function excludeFiles(FileFilterInterface $fileFilter): void
     {
         Shared::getCodeShift()->deny($fileFilter);
     }
@@ -76,17 +89,19 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
-    public static function install(PackageConfigInterface $packageConfig): void
+    public static function install(PackageContextInterface $packageContext, PackageInterface $package): void
     {
-        Shared::getBootstrap()->install();
-    }
+        if (!$package instanceof TasquePackageInterface) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Package config must be a %s but it was a %s',
+                    TasquePackageInterface::class,
+                    $package::class
+                )
+            );
+        }
 
-    /**
-     * @inheritDoc
-     */
-    public static function setSchedulerStrategy(?StrategyInterface $strategy): void
-    {
-        Shared::setSchedulerStrategy($strategy);
+        Shared::getBootstrap()->install($package);
     }
 
     /**

@@ -111,12 +111,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nytris/nytris.git",
-                "reference": "969d1fb30bf9838895ab4d0281258b9b62ed61ab"
+                "reference": "7d7068d326afeefb370ad71b9c250b4f228d11f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nytris/nytris/zipball/969d1fb30bf9838895ab4d0281258b9b62ed61ab",
-                "reference": "969d1fb30bf9838895ab4d0281258b9b62ed61ab",
+                "url": "https://api.github.com/repos/nytris/nytris/zipball/7d7068d326afeefb370ad71b9c250b4f228d11f4",
+                "reference": "7d7068d326afeefb370ad71b9c250b4f228d11f4",
                 "shasum": ""
             },
             "require": {
@@ -146,7 +146,7 @@
                 "issues": "https://github.com/nytris/nytris/issues",
                 "source": "https://github.com/nytris/nytris/tree/main"
             },
-            "time": "2023-10-24T23:51:47+00:00"
+            "time": "2023-10-30T02:50:18+00:00"
         }
     ],
     "packages-dev": [

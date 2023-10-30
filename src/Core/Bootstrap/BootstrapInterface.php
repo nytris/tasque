@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Bootstrap;
 
+use Tasque\TasquePackageInterface;
+
 /**
  * Interface BootstrapInterface.
  *
@@ -25,7 +27,7 @@ interface BootstrapInterface
     /**
      * Installs Tasque.
      */
-    public function install(): void;
+    public function install(TasquePackageInterface $packageConfig): void;
 
     /**
      * Uninstalls Tasque.

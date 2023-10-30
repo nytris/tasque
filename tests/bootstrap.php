@@ -11,7 +11,11 @@
 
 declare(strict_types=1);
 
+use Tasque\Tasque;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
 Mockery::globalHelpers();
+
+Tasque::excludeComposerPackage('mockery/mockery');

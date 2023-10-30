@@ -14,8 +14,7 @@ declare(strict_types=1);
 namespace Tasque;
 
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
-use Nytris\Core\Package\PackageInterface;
-use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
+use Nytris\Core\Package\PackageFacadeInterface;
 use Tasque\Core\Thread\Background\InputInterface;
 use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
 
@@ -26,7 +25,7 @@ use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface TasqueInterface extends PackageInterface
+interface TasqueInterface extends PackageFacadeInterface
 {
     /**
      * Creates but does not yet start a background thread.
@@ -36,16 +35,14 @@ interface TasqueInterface extends PackageInterface
     public function createThread(callable $callback, ?InputInterface $input = null): BackgroundThreadStateInterface;
 
     /**
-     * Excludes the given files from being transpiled with tock handling.
+     * Excludes the given Composer package from being transpiled with tock handling.
      */
-    public function excludeFiles(FileFilterInterface $fileFilter): void;
+    public static function excludeComposerPackage(string $packageName): void;
 
     /**
-     * Sets the Tasque scheduler strategy to use.
-     *
-     * Intended to be called from nytris.config.php.
+     * Excludes the given files from being transpiled with tock handling.
      */
-    public static function setSchedulerStrategy(?StrategyInterface $strategy): void;
+    public static function excludeFiles(FileFilterInterface $fileFilter): void;
 
     /**
      * Manually switches to the next context (thread).

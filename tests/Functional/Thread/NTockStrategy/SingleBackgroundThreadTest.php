@@ -14,10 +14,11 @@ declare(strict_types=1);
 namespace Tasque\Tests\Functional\Thread\NTockStrategy;
 
 use Mockery\MockInterface;
-use Nytris\Core\Package\PackageConfigInterface;
+use Nytris\Core\Package\PackageContextInterface;
 use Tasque\Core\Scheduler\ContextSwitch\NTockStrategy;
 use Tasque\Core\Shared;
 use Tasque\Tasque;
+use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
 use Tasque\Tests\Functional\Harness\Log;
 use Tasque\Tests\Functional\Harness\SingleBackgroundThread\SimpleMainThread;
@@ -30,19 +31,22 @@ use Tasque\Tests\Functional\Harness\SingleBackgroundThread\SimpleMainThread;
 class SingleBackgroundThreadTest extends AbstractTestCase
 {
     private Log $log;
-    private MockInterface&PackageConfigInterface $packageConfig;
+    private MockInterface&TasquePackageInterface $package;
+    private MockInterface&PackageContextInterface $packageContext;
     private Tasque $tasque;
 
     public function setUp(): void
     {
         $this->log = new Log();
-        $this->packageConfig = mock(PackageConfigInterface::class);
+        $this->package = mock(TasquePackageInterface::class, [
+            'getSchedulerStrategy' => new NTockStrategy(1),
+        ]);
+        $this->packageContext = mock(PackageContextInterface::class);
         $this->tasque = new Tasque();
 
         Shared::setScheduler(null);
-        Shared::setSchedulerStrategy(new NTockStrategy(1));
 
-        Tasque::install($this->packageConfig);
+        Tasque::install($this->packageContext, $this->package);
     }
 
     public function tearDown(): void

@@ -24,6 +24,9 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Marshaller\Marshaller;
+use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
+use Tasque\Core\Shared;
+use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
 
 /**
@@ -35,6 +38,7 @@ class BootstrapTest extends AbstractTestCase
 {
     private Bootstrap $bootstrap;
     private MockInterface&CodeShiftInterface $codeShift;
+    private MockInterface&TasquePackageInterface $package;
 
     public function setUp(): void
     {
@@ -42,6 +46,9 @@ class BootstrapTest extends AbstractTestCase
             'deny' => null,
             'install' => null,
             'shift' => null,
+        ]);
+        $this->package = mock(TasquePackageInterface::class, [
+            'getSchedulerStrategy' => null,
         ]);
 
         $this->bootstrap = new Bootstrap($this->codeShift);
@@ -62,7 +69,7 @@ class BootstrapTest extends AbstractTestCase
             ->install()
             ->once();
 
-        $this->bootstrap->install();
+        $this->bootstrap->install($this->package);
     }
 
     public function testInstallAddsATockShiftForMarshaller(): void
@@ -88,7 +95,26 @@ class BootstrapTest extends AbstractTestCase
                 static::assertSame('tock', $methodNameNode->name);
             });
 
-        $this->bootstrap->install();
+        $this->bootstrap->install($this->package);
+    }
+
+    public function testInstallSetsSchedulerStrategyIfConfigured(): void
+    {
+        $strategy = mock(StrategyInterface::class);
+        $this->package->allows()
+            ->getSchedulerStrategy()
+            ->andReturn($strategy);
+
+        $this->bootstrap->install($this->package);
+
+        static::assertSame($strategy, Shared::getSchedulerStrategy());
+    }
+
+    public function testInstallDoesNotFailIfSchedulerStrategyNotConfigured(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $this->bootstrap->install($this->package);
     }
 
     public function testUninstallUninstallsCodeShift(): void
