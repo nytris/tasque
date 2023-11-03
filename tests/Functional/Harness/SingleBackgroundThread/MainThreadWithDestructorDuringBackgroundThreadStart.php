@@ -13,17 +13,19 @@ declare(strict_types=1);
 
 namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
 
+use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
+use Tasque\Tasque;
 use Tasque\TasqueInterface;
 use Tasque\Tests\Functional\Harness\Log;
 
 /**
- * Class SimpleMainThread.
+ * Class MainThreadWithDestructorDuringBackgroundThreadStart.
  *
  * Used by NTockStrategy\SingleBackgroundThreadTest.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class SimpleMainThread
+class MainThreadWithDestructorDuringBackgroundThreadStart
 {
     public function __construct(
         private readonly TasqueInterface $tasque,
@@ -39,9 +41,28 @@ class SimpleMainThread
         $backgroundThread = $this->tasque->createThread($this->backgroundThread->run(...));
         $backgroundThread->shout();
 
-        $this->log->log('Before background thread start');
-        $backgroundThread->start();
-        $this->log->log('After background thread start');
+        $myObject = new class($this->log, $backgroundThread) {
+            public function __construct(
+                private readonly Log $log,
+                private readonly BackgroundThreadStateInterface $backgroundThread
+            ) {
+            }
+
+            public function __destruct()
+            {
+                $this->log->log('Inside destructor');
+
+                $this->log->log('Before background thread start');
+                $this->backgroundThread->start();
+                $this->log->log('After background thread start');
+
+                Tasque::switchContext();
+            }
+        };
+
+        $this->log->log('Before unset() inside main thread');
+        unset($myObject);
+        $this->log->log('After unset() inside main thread');
 
         for ($i = 0; $i < 4; $i++) {
             $this->log->log('Main thread loop iteration #' . $i);

@@ -92,6 +92,15 @@ class BackgroundThreadStateTest extends AbstractTestCase
         $this->state->join();
     }
 
+    public function testShoutMarksTheThreadAsShouting(): void
+    {
+        $this->thread->expects()
+            ->shout()
+            ->once();
+
+        $this->state->shout();
+    }
+
     public function testStartStartsTheThread(): void
     {
         $this->thread->expects()

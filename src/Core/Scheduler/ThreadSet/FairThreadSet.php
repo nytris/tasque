@@ -92,8 +92,12 @@ class FairThreadSet implements ThreadSetInterface
         }
 
         if (!$this->currentThread->isMainThread()) {
-            // We're inside a background thread, suspend the current Fiber and return control to the main thread
-            // as all scheduling must happen from there.
+            /*
+             * We're inside a background thread, attempt to suspend the current Fiber
+             * and return control to the main thread as all scheduling must happen from there.
+             *
+             * Note that this may return false indicating that the thread cannot be switched from at this time.
+             */
             $this->currentThread->switchFrom();
 
             // At this point, the background thread suspended just above will have been resumed.
@@ -106,6 +110,7 @@ class FairThreadSet implements ThreadSetInterface
 
             $this->currentThread = $newThread;
 
+            // Note that this may return false indicating that the thread cannot be switched to at this time.
             $newThread->switchTo();
 
             // Once control returns to this point, we must be back in the main thread.

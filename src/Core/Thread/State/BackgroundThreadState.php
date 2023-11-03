@@ -73,6 +73,14 @@ class BackgroundThreadState implements BackgroundThreadStateInterface
     /**
      * @inheritDoc
      */
+    public function shout(): void
+    {
+        $this->thread->shout();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function start(): void
     {
         $this->thread->start();

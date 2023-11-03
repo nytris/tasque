@@ -23,6 +23,12 @@ namespace Tasque\Core\Thread\Control;
 interface ExternalControlInterface extends ControlInterface
 {
     /**
+     * Makes the background thread also raise any exceptions in the main thread
+     * rather than just recording them.
+     */
+    public function shout(): void;
+
+    /**
      * Starts the thread. Note that this does not necessarily interrupt the running one,
      * depending on the scheduler strategy in use.
      */

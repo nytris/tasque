@@ -69,16 +69,18 @@ class MainThread implements ThreadInterface
     /**
      * @inheritDoc
      */
-    public function switchFrom(): void
+    public function switchFrom(): bool
     {
         // Nothing to do; the main thread's state will remain as part of the current call stack.
+        return true;
     }
 
     /**
      * @inheritDoc
      */
-    public function switchTo(): void
+    public function switchTo(): bool
     {
         // Nothing to do; allow execution to return to the main thread up the call stack.
+        return true;
     }
 }

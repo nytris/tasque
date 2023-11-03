@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tasque\Core\Thread\Background;
 
 use Fiber;
+use FiberError;
 use LogicException;
 use Tasque\Core\Exception\ThreadDidNotReturnException;
 use Tasque\Core\Exception\ThreadDidNotThrowException;
@@ -33,7 +34,15 @@ use Throwable;
  */
 class BackgroundThread implements BackgroundThreadInterface
 {
+    private const CANNOT_SWITCH_FIBERS_ERROR_MESSAGE = 'Cannot switch fibers in current execution context';
+    private const CANNOT_SWITCH_FIBERS_IN_NESTED_THREAD = 'Cannot switch fiber context in a nested thread';
+
     private ?Throwable $resultThrowable = null;
+    /**
+     * Whether the background thread should also raise any exceptions in the main thread
+     * rather than only recording them.
+     */
+    private bool $shout = false;
 
     /**
      * @param ThreadSetInterface $threadSet
@@ -124,6 +133,14 @@ class BackgroundThread implements BackgroundThreadInterface
     /**
      * @inheritDoc
      */
+    public function shout(): void
+    {
+        $this->shout = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function start(): void
     {
         $this->threadSet->addThread($this);
@@ -132,36 +149,72 @@ class BackgroundThread implements BackgroundThreadInterface
     /**
      * @inheritDoc
      */
-    public function switchFrom(): void
+    public function switchFrom(): bool
     {
         if ($this->fiber->isTerminated()) {
             // Thread not started or has terminated; nothing to do.
-            return;
+            return true;
         }
 
         if ($this !== $this->threadSet->getCurrentThread()) {
             throw new LogicException('Cannot suspend thread: it is not the current thread');
         }
 
-        Fiber::suspend();
+        if (Fiber::getCurrent() === null) {
+            throw new LogicException('Cannot suspend current thread fiber as there is none');
+        }
+
+        try {
+            Fiber::suspend();
+        } catch (FiberError $error) {
+            if ($error->getMessage() === self::CANNOT_SWITCH_FIBERS_ERROR_MESSAGE) {
+                if ($error->getFile() !== __FILE__ || $error->getLine() !== __LINE__ - 3) {
+                    // The error wasn't caused by ->resume() above, so there is a bug somewhere.
+                    throw new LogicException(self::CANNOT_SWITCH_FIBERS_IN_NESTED_THREAD);
+                }
+
+                // We are unable to switch contexts at this time, so cancel this switch.
+                return false;
+            }
+
+            throw $error; // Some other unexpected Fiber error.
+        }
+
+        return true;
     }
 
     /**
      * @inheritDoc
      */
-    public function switchTo(): void
+    public function switchTo(): bool
     {
         if (!$this->fiber->isStarted()) {
             $threadControl = new BackgroundThreadControl($this);
 
             try {
                 $this->fiber->start($threadControl);
+            } catch (FiberError $error) {
+                if ($error->getMessage() === self::CANNOT_SWITCH_FIBERS_ERROR_MESSAGE) {
+                    if ($error->getFile() !== __FILE__ || $error->getLine() !== __LINE__ - 3) {
+                        // The error wasn't caused by ->resume() above, so there is a bug somewhere.
+                        throw new LogicException(self::CANNOT_SWITCH_FIBERS_IN_NESTED_THREAD);
+                    }
+
+                    // We are unable to switch contexts at this time, so cancel this switch.
+                    return false;
+                }
+
+                throw $error; // Some other unexpected Fiber error.
             } catch (Throwable $throwable) {
-                // Record the throw, but do not rethrow it.
+                // Record the throw, but do not necessarily rethrow it, unless...
                 $this->resultThrowable = $throwable;
+
+                if ($this->shout) {
+                    throw $throwable;
+                }
             }
 
-            return;
+            return true; // Allow the context switch.
         }
 
         if ($this->fiber->isTerminated()) {
@@ -171,9 +224,27 @@ class BackgroundThread implements BackgroundThreadInterface
 
         try {
             $this->fiber->resume();
+        } catch (FiberError $error) {
+            if ($error->getMessage() === self::CANNOT_SWITCH_FIBERS_ERROR_MESSAGE) {
+                if ($error->getFile() !== __FILE__ || $error->getLine() !== __LINE__ - 3) {
+                    // The error wasn't caused by ->resume() above, so there is a bug somewhere.
+                    throw new LogicException(self::CANNOT_SWITCH_FIBERS_IN_NESTED_THREAD);
+                }
+
+                // We are unable to switch contexts at this time, so cancel this switch.
+                return false;
+            }
+
+            throw $error; // Some other unexpected Fiber error.
         } catch (Throwable $throwable) {
-            // Record the throw, but do not rethrow it.
+            // Record the throw, but do not necessarily rethrow it, unless...
             $this->resultThrowable = $throwable;
+
+            if ($this->shout) {
+                throw $throwable;
+            }
         }
+
+        return true; // Allow the context switch.
     }
 }

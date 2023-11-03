@@ -11,7 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Tests\Functional\Harness;
+namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
+
+use Tasque\Tests\Functional\Harness\Log;
 
 /**
  * Class SimpleBackgroundThread.
@@ -20,7 +22,7 @@ namespace Tasque\Tests\Functional\Harness;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class SimpleBackgroundThread
+class SimpleBackgroundThread implements TestBackgroundThreadInterface
 {
     public function __construct(
         private readonly Log $log

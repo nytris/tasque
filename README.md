@@ -14,6 +14,13 @@
 To allow periodic background tasks, such as sending keep-alive or heartbeat messages,
 to be performed in a traditional PHP environment where there is no event loop.
 
+## Demos
+
+- See the [Tasque demo][4] for an example of how Tasque is used to start multiple threads.
+- See the [Tasque EventLoop demo][5] to see how [Tasque EventLoop][6] can be used
+  to run a ReactPHP event loop inside one of those threads, in parallel with the main thread
+  (and any other Tasque background threads).
+
 ## Usage
 Install this package with Composer:
 
@@ -57,73 +64,23 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $tasque = new Tasque();
 
-class MyMainThreadLogic
-{
-    public function getFirst(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'first'; 
-    }
-
-    public function getSecond(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'second'; 
-    }
-
-    public function getThird(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'third'; 
-    }
-}
-
-class MyBackgroundThreadLogic
-{
-    public function getFirst(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'first'; 
-    }
-
-    public function getSecond(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'second'; 
-    }
-
-    public function getThird(): string
-    {
-        print __METHOD__ . PHP_EOL;
-
-        return 'third'; 
-    }
-}
-
 $thread = $tasque->createThread(
     function () {
-        $bgThreadLogic = new MyBackgroundThreadLogic;
-
-        return $bgThreadLogic->getFirst() . ' ' . $bgThreadLogic->getSecond() . ' ' . $bgThreadLogic->getThird(); 
+        /*
+         * Run your background thread logic here.
+         *
+         * Note that this should be outside of the entrypoint script for your application,
+         * so that PHP Code Shift can transpile it with the tock calls required by Tasque.
+         */
     }
 );
 $thread->start();
 
-$mainThreadLogic = new MyMainThreadLogic;
-
-$mainThreadResult = $mainThreadLogic->getFirst() . ' ' . $mainThreadLogic->getSecond() . ' ' . $mainThreadLogic->getThird();
-
 // Wait for the background thread to complete and capture its result.
 $thread->join();
-$bgThreadResult = $thread->getReturn();
+$backgroundThreadResult = $thread->getReturn();
 
-print 'Main thread result: "' . $mainThreadResult . '"';
-print 'Background thread result: "' . $bgThreadResult . '"';
+print 'Background thread result: "' . $backgroundThreadResult . '"';
 ```
 
 ## Limitations
@@ -136,3 +93,6 @@ print 'Background thread result: "' . $bgThreadResult . '"';
 [1]: https://github.com/asmblah/php-code-shift
 [2]: https://en.wikipedia.org/wiki/Green_thread
 [3]: https://www.php.net/manual/en/language.fibers.php
+[4]: https://github.com/nytris/tasque-demo
+[5]: https://github.com/nytris/tasque-event-loop-demo
+[6]: https://github.com/nytris/tasque-event-loop

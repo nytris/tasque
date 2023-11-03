@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Tasque\Tests\Unit\Core\Thread\Background;
 
-use Exception;
 use Fiber;
 use InvalidArgumentException;
 use Mockery\MockInterface;
+use RuntimeException;
 use Tasque\Core\Exception\ThreadDidNotReturnException;
 use Tasque\Core\Exception\ThreadDidNotThrowException;
 use Tasque\Core\Exception\ThreadNotTerminatedException;
@@ -51,7 +51,7 @@ class BackgroundThreadTest extends AbstractTestCase
 
             switch ($command) {
                 case 'throw':
-                    throw new Exception('Bang! from fiber');
+                    throw new RuntimeException('Bang! from fiber');
                 case 'return':
                     return 'my result from fiber';
                 case 'suspend':
@@ -213,6 +213,35 @@ class BackgroundThreadTest extends AbstractTestCase
             ->once();
 
         $this->thread->join();
+    }
+
+    public function testShoutCausesExceptionsToBeRaisedInTheMainThread(): void
+    {
+        $this->input->allows()
+            ->getValue()
+            ->andReturn('throw');
+        $this->thread->start();
+        $this->thread->shout();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Bang! from fiber');
+
+        $this->thread->switchTo();
+    }
+
+    public function testShoutCausesExceptionsToStillBeRecorded(): void
+    {
+        $this->input->allows()
+            ->getValue()
+            ->andReturn('throw');
+        $this->thread->start();
+        $this->thread->shout();
+
+        try {
+            $this->thread->switchTo();
+        } catch (RuntimeException) {}
+
+        static::assertSame('Bang! from fiber', $this->thread->getThrow()->getMessage());
     }
 
     public function testStartAddsTheThreadToThreadSet(): void

@@ -15,6 +15,7 @@ namespace Tasque\Core\Thread;
 
 use Tasque\Core\Exception\ThreadTerminatedException;
 use Tasque\Core\Thread\State\ThreadStateInterface;
+use Throwable;
 
 /**
  * Interface ThreadInterface.
@@ -33,13 +34,17 @@ interface ThreadInterface extends ThreadStateInterface
     /**
      * Switches execution out of the thread, if it is running.
      * Its running state will be stored as the state of its Fiber if it is a background thread.
+     *
+     * Always called from a background thread by the ThreadSet.
      */
-    public function switchFrom(): void;
+    public function switchFrom(): bool;
 
     /**
      * Switches execution to the thread, starting it if it has not been already.
+     * Always called from the main thread by the ThreadSet.
      *
      * @throws ThreadTerminatedException When the thread has already terminated.
+     * @throws Throwable When the thread has ->shout() enabled and an exception is raised.
      */
-    public function switchTo(): void;
+    public function switchTo(): bool;
 }
