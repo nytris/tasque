@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "asmblah/php-code-shift",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/asmblah/php-code-shift.git",
-                "reference": "dcaeb2ecabbd091363f308db3168c6af9b1039b1"
+                "reference": "7bc63c6dc1d4b3f07d539ccd2133b8b58b0e50c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/asmblah/php-code-shift/zipball/dcaeb2ecabbd091363f308db3168c6af9b1039b1",
-                "reference": "dcaeb2ecabbd091363f308db3168c6af9b1039b1",
+                "url": "https://api.github.com/repos/asmblah/php-code-shift/zipball/7bc63c6dc1d4b3f07d539ccd2133b8b58b0e50c8",
+                "reference": "7bc63c6dc1d4b3f07d539ccd2133b8b58b0e50c8",
                 "shasum": ""
             },
             "require": {
@@ -45,9 +45,9 @@
             ],
             "support": {
                 "issues": "https://github.com/asmblah/php-code-shift/issues",
-                "source": "https://github.com/asmblah/php-code-shift/tree/v0.1.0"
+                "source": "https://github.com/asmblah/php-code-shift/tree/v0.1.1"
             },
-            "time": "2023-10-26T22:32:31+00:00"
+            "time": "2023-11-02T07:57:57+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -111,12 +111,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nytris/nytris.git",
-                "reference": "7d7068d326afeefb370ad71b9c250b4f228d11f4"
+                "reference": "c36374626c048da1b04651d6c56ce991748646b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nytris/nytris/zipball/7d7068d326afeefb370ad71b9c250b4f228d11f4",
-                "reference": "7d7068d326afeefb370ad71b9c250b4f228d11f4",
+                "url": "https://api.github.com/repos/nytris/nytris/zipball/c36374626c048da1b04651d6c56ce991748646b2",
+                "reference": "c36374626c048da1b04651d6c56ce991748646b2",
                 "shasum": ""
             },
             "require": {
@@ -146,7 +146,7 @@
                 "issues": "https://github.com/nytris/nytris/issues",
                 "source": "https://github.com/nytris/nytris/tree/main"
             },
-            "time": "2023-10-30T02:50:18+00:00"
+            "time": "2023-11-03T07:56:36+00:00"
         }
     ],
     "packages-dev": [
@@ -458,16 +458,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.39",
+            "version": "1.10.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4"
+                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d9dedb0413f678b4d03cbc2279a48f91592c97c4",
-                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/93c84b5bf7669920d823631e39904d69b9c7dc5d",
+                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d",
                 "shasum": ""
             },
             "require": {
@@ -516,7 +516,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-17T15:46:26+00:00"
+            "time": "2023-10-30T14:48:31+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
