@@ -221,6 +221,7 @@ class BackgroundThreadTest extends AbstractTestCase
             ->getValue()
             ->andReturn('throw');
         $this->thread->start();
+
         $this->thread->shout();
 
         $this->expectException(RuntimeException::class);
@@ -235,8 +236,8 @@ class BackgroundThreadTest extends AbstractTestCase
             ->getValue()
             ->andReturn('throw');
         $this->thread->start();
-        $this->thread->shout();
 
+        $this->thread->shout();
         try {
             $this->thread->switchTo();
         } catch (RuntimeException) {}
