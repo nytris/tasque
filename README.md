@@ -18,7 +18,7 @@ to be performed in a traditional PHP environment where there is no event loop.
 
 - See the [Tasque demo][4] for an example of how Tasque is used to start multiple threads.
 - See the [Tasque EventLoop demo][5] to see how [Tasque EventLoop][6] can be used
-  to run a ReactPHP event loop inside one of those threads, in parallel with the main thread
+  to run a ReactPHP event loop inside one of those threads, concurrently with the main thread
   (and any other Tasque background threads).
 
 ## Usage
