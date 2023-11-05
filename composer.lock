@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a711acd5b804a3491214c6032ce9de79",
+    "content-hash": "9a34863879d59ada9d1b2007ed288789",
     "packages": [
         {
             "name": "asmblah/php-code-shift",
@@ -107,16 +107,16 @@
         },
         {
             "name": "nytris/nytris",
-            "version": "dev-main",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nytris/nytris.git",
-                "reference": "c36374626c048da1b04651d6c56ce991748646b2"
+                "reference": "f6af9e604b2b6606cf95a322d3eecca6e829ae1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nytris/nytris/zipball/c36374626c048da1b04651d6c56ce991748646b2",
-                "reference": "c36374626c048da1b04651d6c56ce991748646b2",
+                "url": "https://api.github.com/repos/nytris/nytris/zipball/f6af9e604b2b6606cf95a322d3eecca6e829ae1e",
+                "reference": "f6af9e604b2b6606cf95a322d3eecca6e829ae1e",
                 "shasum": ""
             },
             "require": {
@@ -128,7 +128,6 @@
                 "phpstan/phpstan-mockery": "^1.1",
                 "phpunit/phpunit": "^10.2"
             },
-            "default-branch": true,
             "type": "project",
             "autoload": {
                 "files": [
@@ -144,9 +143,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nytris/nytris/issues",
-                "source": "https://github.com/nytris/nytris/tree/main"
+                "source": "https://github.com/nytris/nytris/tree/v0.1.0"
             },
-            "time": "2023-11-03T07:56:36+00:00"
+            "time": "2023-11-05T09:21:06+00:00"
         }
     ],
     "packages-dev": [
@@ -1958,9 +1957,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "nytris/nytris": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

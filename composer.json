@@ -15,7 +15,7 @@
     "require": {
         "php": ">=8.1",
         "asmblah/php-code-shift": "^0.1",
-        "nytris/nytris": "dev-main"
+        "nytris/nytris": "^0.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",
