@@ -117,6 +117,14 @@ class BackgroundThread implements BackgroundThreadInterface
     /**
      * @inheritDoc
      */
+    public function isShouting(): bool
+    {
+        return $this->shout;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isTerminated(): bool
     {
         return $this->fiber->isTerminated();

@@ -57,6 +57,14 @@ class BackgroundThreadState implements BackgroundThreadStateInterface
     /**
      * @inheritDoc
      */
+    public function isShouting(): bool
+    {
+        return $this->thread->isShouting();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isTerminated(): bool
     {
         return $this->thread->isTerminated();

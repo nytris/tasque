@@ -83,6 +83,18 @@ class BackgroundThreadStateTest extends AbstractTestCase
         return ['true' => [true], 'false' => [false]];
     }
 
+    /**
+     * @dataProvider booleanProvider
+     */
+    public function testIsShoutingReturnsTheShoutingStateOfTheThread(bool $isShouting): void
+    {
+        $this->thread->allows()
+            ->isShouting()
+            ->andReturn($isShouting);
+
+        static::assertSame($isShouting, $this->state->isShouting());
+    }
+
     public function testJoinJoinsTheThread(): void
     {
         $this->thread->expects()

@@ -45,6 +45,24 @@ class BackgroundThreadControlTest extends AbstractTestCase
         static::assertSame($this->input, $this->control->getInput());
     }
 
+    public function testIsShoutingReturnsTrueWhenThreadMarkedAsShouting(): void
+    {
+        $this->thread->allows()
+            ->isShouting()
+            ->andReturnTrue();
+
+        static::assertTrue($this->control->isShouting());
+    }
+
+    public function testIsShoutingReturnsFalseWhenThreadMarkedAsShouting(): void
+    {
+        $this->thread->allows()
+            ->isShouting()
+            ->andReturnFalse();
+
+        static::assertFalse($this->control->isShouting());
+    }
+
     public function testJoinJoinsTheThread(): void
     {
         $this->thread->expects()
@@ -52,5 +70,14 @@ class BackgroundThreadControlTest extends AbstractTestCase
             ->once();
 
         $this->control->join();
+    }
+
+    public function testShoutMarksTheThreadAsShouting(): void
+    {
+        $this->thread->expects()
+            ->shout()
+            ->once();
+
+        $this->control->shout();
     }
 }

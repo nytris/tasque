@@ -179,6 +179,18 @@ class BackgroundThreadTest extends AbstractTestCase
         static::assertFalse($this->thread->isRunning());
     }
 
+    public function testIsShoutingReturnsTrueWhenShouting(): void
+    {
+        $this->thread->shout();
+
+        static::assertTrue($this->thread->isShouting());
+    }
+
+    public function testIsShoutingReturnsFalseWhenNotShouting(): void
+    {
+        static::assertFalse($this->thread->isShouting());
+    }
+
     public function testIsTerminatedReturnsFalseInitially(): void
     {
         static::assertFalse($this->thread->isTerminated());

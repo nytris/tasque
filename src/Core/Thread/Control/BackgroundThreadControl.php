@@ -41,8 +41,24 @@ class BackgroundThreadControl implements InternalControlInterface
     /**
      * @inheritDoc
      */
+    public function isShouting(): bool
+    {
+        return $this->thread->isShouting();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function join(): void
     {
         $this->thread->join();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function shout(): void
+    {
+        $this->thread->shout();
     }
 }
