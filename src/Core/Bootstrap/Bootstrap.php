@@ -22,6 +22,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use Tasque\Core\Marshaller\Marshaller;
 use Tasque\Core\Shared;
+use Tasque\Core\Shutdown\ShutdownHandlerInterface;
 use Tasque\TasquePackageInterface;
 
 /**
@@ -36,7 +37,8 @@ class Bootstrap implements BootstrapInterface
     private bool $installed = false;
 
     public function __construct(
-        private readonly CodeShiftInterface $codeShift
+        private readonly CodeShiftInterface $codeShift,
+        private readonly ShutdownHandlerInterface $shutdownHandler
     ) {
         // Exclude Tasque itself from having tock hooks applied.
         $this->codeShift->deny(new FileFilter(dirname(__DIR__, 3) . '/src/**'));
@@ -66,6 +68,8 @@ class Bootstrap implements BootstrapInterface
         if ($schedulerStrategy !== null) {
             Shared::setSchedulerStrategy($schedulerStrategy);
         }
+
+        $this->shutdownHandler->install();
 
         $this->installed = true;
     }

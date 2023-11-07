@@ -22,6 +22,7 @@ use Tasque\Core\Scheduler\ContextSwitch\TimeSliceStrategy;
 use Tasque\Core\Scheduler\Scheduler;
 use Tasque\Core\Scheduler\SchedulerInterface;
 use Tasque\Core\Scheduler\ThreadSet\FairThreadSet;
+use Tasque\Core\Shutdown\ShutdownHandler;
 
 /**
  * Class Shared.
@@ -46,7 +47,7 @@ class Shared
     public static function getBootstrap(): BootstrapInterface
     {
         if (self::$bootstrap === null) {
-            self::$bootstrap = new Bootstrap(self::getCodeShift());
+            self::$bootstrap = new Bootstrap(self::getCodeShift(), new ShutdownHandler());
         }
 
         return self::$bootstrap;

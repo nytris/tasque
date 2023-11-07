@@ -26,6 +26,7 @@ use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Marshaller\Marshaller;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Shared;
+use Tasque\Core\Shutdown\ShutdownHandlerInterface;
 use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
 
@@ -39,6 +40,7 @@ class BootstrapTest extends AbstractTestCase
     private Bootstrap $bootstrap;
     private MockInterface&CodeShiftInterface $codeShift;
     private MockInterface&TasquePackageInterface $package;
+    private MockInterface&ShutdownHandlerInterface $shutdownHandler;
 
     public function setUp(): void
     {
@@ -50,8 +52,11 @@ class BootstrapTest extends AbstractTestCase
         $this->package = mock(TasquePackageInterface::class, [
             'getSchedulerStrategy' => null,
         ]);
+        $this->shutdownHandler = mock(ShutdownHandlerInterface::class, [
+            'install' => null,
+        ]);
 
-        $this->bootstrap = new Bootstrap($this->codeShift);
+        $this->bootstrap = new Bootstrap($this->codeShift, $this->shutdownHandler);
     }
 
     public function testConstructorAddsDenyRuleForTasqueItself(): void
@@ -113,6 +118,15 @@ class BootstrapTest extends AbstractTestCase
     public function testInstallDoesNotFailIfSchedulerStrategyNotConfigured(): void
     {
         $this->expectNotToPerformAssertions();
+
+        $this->bootstrap->install($this->package);
+    }
+
+    public function testInstallInstallsShutdownHandler(): void
+    {
+        $this->shutdownHandler->expects()
+            ->install()
+            ->once();
 
         $this->bootstrap->install($this->package);
     }
