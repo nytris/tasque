@@ -30,6 +30,11 @@ interface BootstrapInterface
     public function install(TasquePackageInterface $packageConfig): void;
 
     /**
+     * Determines whether Tasque has been installed or not.
+     */
+    public function isInstalled(): bool;
+
+    /**
      * Uninstalls Tasque.
      */
     public function uninstall(): void;

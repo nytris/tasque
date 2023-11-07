@@ -107,6 +107,14 @@ class Tasque implements TasqueInterface
     /**
      * @inheritDoc
      */
+    public static function isInstalled(): bool
+    {
+        return Shared::getBootstrap()->isInstalled();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function switchContext(): void
     {
         Shared::getScheduler()->switchContext();

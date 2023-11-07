@@ -33,6 +33,8 @@ use Tasque\TasquePackageInterface;
  */
 class Bootstrap implements BootstrapInterface
 {
+    private bool $installed = false;
+
     public function __construct(
         private readonly CodeShiftInterface $codeShift
     ) {
@@ -64,6 +66,16 @@ class Bootstrap implements BootstrapInterface
         if ($schedulerStrategy !== null) {
             Shared::setSchedulerStrategy($schedulerStrategy);
         }
+
+        $this->installed = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isInstalled(): bool
+    {
+        return $this->installed;
     }
 
     /**
@@ -72,5 +84,7 @@ class Bootstrap implements BootstrapInterface
     public function uninstall(): void
     {
         $this->codeShift->uninstall();
+
+        $this->installed = false;
     }
 }

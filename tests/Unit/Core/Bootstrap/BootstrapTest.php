@@ -117,6 +117,18 @@ class BootstrapTest extends AbstractTestCase
         $this->bootstrap->install($this->package);
     }
 
+    public function testIsInstalledReturnsTrueWhenInstalled(): void
+    {
+        $this->bootstrap->install($this->package);
+
+        static::assertTrue($this->bootstrap->isInstalled());
+    }
+
+    public function testIsInstalledReturnsFalseWhenNotInstalled(): void
+    {
+        static::assertFalse($this->bootstrap->isInstalled());
+    }
+
     public function testUninstallUninstallsCodeShift(): void
     {
         $this->codeShift->expects()

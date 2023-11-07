@@ -107,16 +107,16 @@
         },
         {
             "name": "nytris/nytris",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nytris/nytris.git",
-                "reference": "f6af9e604b2b6606cf95a322d3eecca6e829ae1e"
+                "reference": "a75be5d81bc181c22a71b3e01a40c45b0d152ab5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nytris/nytris/zipball/f6af9e604b2b6606cf95a322d3eecca6e829ae1e",
-                "reference": "f6af9e604b2b6606cf95a322d3eecca6e829ae1e",
+                "url": "https://api.github.com/repos/nytris/nytris/zipball/a75be5d81bc181c22a71b3e01a40c45b0d152ab5",
+                "reference": "a75be5d81bc181c22a71b3e01a40c45b0d152ab5",
                 "shasum": ""
             },
             "require": {
@@ -143,9 +143,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nytris/nytris/issues",
-                "source": "https://github.com/nytris/nytris/tree/v0.1.0"
+                "source": "https://github.com/nytris/nytris/tree/v0.1.1"
             },
-            "time": "2023-11-05T09:21:06+00:00"
+            "time": "2023-11-07T07:18:09+00:00"
         }
     ],
     "packages-dev": [
@@ -457,16 +457,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.40",
+            "version": "1.10.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d"
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/93c84b5bf7669920d823631e39904d69b9c7dc5d",
-                "reference": "93c84b5bf7669920d823631e39904d69b9c7dc5d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
+                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
                 "shasum": ""
             },
             "require": {
@@ -515,7 +515,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-30T14:48:31+00:00"
+            "time": "2023-11-05T12:57:57+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
