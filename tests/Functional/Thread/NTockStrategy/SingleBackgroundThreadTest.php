@@ -15,8 +15,8 @@ namespace Tasque\Tests\Functional\Thread\NTockStrategy;
 
 use Mockery\MockInterface;
 use Nytris\Core\Package\PackageContextInterface;
+use Symfony\Component\ErrorHandler\DebugClassLoader;
 use Tasque\Core\Scheduler\ContextSwitch\NTockStrategy;
-use Tasque\Core\Shared;
 use Tasque\Tasque;
 use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
@@ -26,6 +26,8 @@ use Tasque\Tests\Functional\Harness\SingleBackgroundThread\MainThreadWithDestruc
 use Tasque\Tests\Functional\Harness\SingleBackgroundThread\MainThreadWithDestructorDuringBackgroundThreadStart;
 use Tasque\Tests\Functional\Harness\SingleBackgroundThread\SimpleBackgroundThread;
 use Tasque\Tests\Functional\Harness\SingleBackgroundThread\SimpleMainThread;
+use Tasque\Tests\Functional\Harness\SingleBackgroundThread\TinyBackgroundThread;
+use Tasque\Tests\Functional\Harness\SingleBackgroundThread\TinyMainThread;
 
 /**
  * Class SingleBackgroundThreadTest.
@@ -48,17 +50,12 @@ class SingleBackgroundThreadTest extends AbstractTestCase
         $this->packageContext = mock(PackageContextInterface::class);
         $this->tasque = new Tasque();
 
-        Shared::setScheduler(null);
-
         Tasque::install($this->packageContext, $this->package);
     }
 
     public function tearDown(): void
     {
         Tasque::uninstall();
-
-        Shared::setScheduler(null);
-        Shared::setSchedulerStrategy(null);
     }
 
     public function testSingleBackgroundThreadIsScheduledCorrectly(): void
@@ -203,11 +200,11 @@ class SingleBackgroundThreadTest extends AbstractTestCase
         $this->log->log('Start');
 
         (
-        new MainThreadWithDestructorDuringBackgroundThreadStart(
-            $this->tasque,
-            $this->log,
-            new SimpleBackgroundThread($this->log)
-        )
+            new MainThreadWithDestructorDuringBackgroundThreadStart(
+                $this->tasque,
+                $this->log,
+                new SimpleBackgroundThread($this->log)
+            )
         )->run();
 
         static::assertEquals(
@@ -233,6 +230,42 @@ class SingleBackgroundThreadTest extends AbstractTestCase
                 // Main thread (foreground) and background threads are then scheduled evenly.
                 'Background thread loop iteration #2',
                 'Background thread loop iteration #3',
+                'End of background thread run',
+                'After join',
+                'End of main thread run',
+            ],
+            $this->log->getLog()
+        );
+    }
+
+    /**
+     * @runInSeparateProcess To ensure relevant classes are not autoloaded yet.
+     *
+     * This was happening because DebugClassLoader unregisters all autoloaders to hook them,
+     * meaning that if Tasque/Shift are not fully autoloaded, then during the deregistration loop
+     * Tasque could be entered into via ::tock() call and fail during autoloading of a class.
+     */
+    public function testSymfonyDebugErrorHandlerAutoloaderHookingDoesNotCauseBootstrappingFailure(): void
+    {
+        $this->log->log('Start');
+        DebugClassLoader::enable();
+
+        (
+            new TinyMainThread(
+                $this->tasque,
+                $this->log,
+                new TinyBackgroundThread($this->log)
+            )
+        )->run();
+
+        static::assertEquals(
+            [
+                'Start',
+                'Start of main thread run',
+                'Before background thread start',
+                'After background thread start',
+                'Before join',
+                'Start of background thread run',
                 'End of background thread run',
                 'After join',
                 'End of main thread run',

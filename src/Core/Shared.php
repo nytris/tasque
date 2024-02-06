@@ -17,12 +17,16 @@ use Asmblah\PhpCodeShift\CodeShift;
 use Asmblah\PhpCodeShift\CodeShiftInterface;
 use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Bootstrap\BootstrapInterface;
+use Tasque\Core\Scheduler\ContextSwitch\ManualStrategy;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Scheduler\ContextSwitch\TimeSliceStrategy;
+use Tasque\Core\Scheduler\NullScheduler;
 use Tasque\Core\Scheduler\Scheduler;
 use Tasque\Core\Scheduler\SchedulerInterface;
 use Tasque\Core\Scheduler\ThreadSet\FairThreadSet;
 use Tasque\Core\Shutdown\ShutdownHandler;
+use Tasque\Core\Thread\MainThread;
+use Tasque\Core\Thread\MainThreadInterface;
 
 /**
  * Class Shared.
@@ -37,56 +41,80 @@ use Tasque\Core\Shutdown\ShutdownHandler;
 class Shared
 {
     private static ?BootstrapInterface $bootstrap = null;
+    private static bool $bootstrapped = false;
     private static ?CodeShiftInterface $codeShift = null;
+    private static bool $initialised = false;
+    private static ?MainThreadInterface $mainThread = null;
+    private static ?SchedulerInterface $nullScheduler = null;
     private static ?SchedulerInterface $scheduler = null;
-    private static ?StrategyInterface $schedulerStrategy = null;
 
     /**
-     * Fetches the configured Bootstrap. Will create one by default if not overridden.
+     * Bootstrapping only ever happens once, either via Composer's file-autoload mechanism
+     * or via Tasque::install(...), whichever happens first.
+     */
+    public static function bootstrap(): void
+    {
+        if (self::$bootstrapped) {
+            return;
+        }
+
+        self::$bootstrapped = true;
+
+        // Create the special representation of the main thread for scheduling.
+        self::$mainThread = new MainThread();
+        self::$nullScheduler = new NullScheduler(new ManualStrategy());
+    }
+
+    /**
+     * Fetches the configured Bootstrap. One will have been created by default if not overridden.
      */
     public static function getBootstrap(): BootstrapInterface
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = new Bootstrap(self::getCodeShift(), new ShutdownHandler());
-        }
-
         return self::$bootstrap;
     }
 
     /**
-     * Fetches the configured CodeShift. Will create one by default if not overridden.
+     * Fetches the configured CodeShift. One will have been created by default if not overridden.
      */
     public static function getCodeShift(): CodeShiftInterface
     {
-        if (self::$codeShift === null) {
-            self::$codeShift = new CodeShift();
-        }
-
         return self::$codeShift;
     }
 
     /**
-     * Fetches the configured Scheduler. Will create one by default if not overridden.
+     * Fetches the configured Scheduler. One will have been created by default if not overridden.
      */
     public static function getScheduler(): SchedulerInterface
     {
-        if (self::$scheduler === null) {
-            self::$scheduler = new Scheduler(new FairThreadSet(), self::getSchedulerStrategy());
-        }
-
         return self::$scheduler;
     }
 
     /**
-     * Fetches the configured scheduler strategy. Will create one by default if not overridden.
+     * Fetches the configured scheduler strategy. One will have been created by default if not overridden.
      */
     public static function getSchedulerStrategy(): StrategyInterface
     {
-        if (self::$schedulerStrategy === null) {
-            self::$schedulerStrategy = new TimeSliceStrategy();
+        return self::$scheduler->getStrategy();
+    }
+
+    /**
+     * Initialises the internal state of Tasque.
+     */
+    public static function initialise(): void
+    {
+        if (self::$initialised) {
+            return;
         }
 
-        return self::$schedulerStrategy;
+        self::$initialised = true;
+
+        self::$codeShift = new CodeShift();
+        self::$bootstrap = new Bootstrap(self::$codeShift, new ShutdownHandler());
+
+        // Never transpile core dependencies which should not need tocks applying to them.
+        self::$codeShift->excludeComposerPackage('nytris/nytris');
+
+        self::$scheduler = new Scheduler(new FairThreadSet(self::$mainThread), new TimeSliceStrategy());
     }
 
     /**
@@ -116,7 +144,10 @@ class Shared
      */
     public static function setScheduler(?SchedulerInterface $scheduler): void
     {
-        self::$scheduler = $scheduler;
+        self::$scheduler = $scheduler ?? new Scheduler(
+            self::$scheduler->getThreadSet(),
+            self::$scheduler->getStrategy()
+        );
     }
 
     /**
@@ -126,7 +157,21 @@ class Shared
      */
     public static function setSchedulerStrategy(?StrategyInterface $strategy): void
     {
-        self::$scheduler = null;
-        self::$schedulerStrategy = $strategy;
+        self::$scheduler = new Scheduler(self::$scheduler->getThreadSet(), $strategy);
+    }
+
+    /**
+     * Uninitialises the internal state of Tasque.
+     *
+     * Mostly useful during testing.
+     */
+    public static function uninitialise(): void
+    {
+        self::$bootstrap = null;
+        self::$codeShift = null;
+        // If code has already been instrumented with tocks, we need a stub scheduler available to handle them,
+        // even though they will never result in a context switch.
+        self::$scheduler = self::$nullScheduler;
+        self::$initialised = false;
     }
 }

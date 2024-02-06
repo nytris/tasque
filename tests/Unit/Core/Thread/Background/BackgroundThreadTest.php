@@ -41,6 +41,8 @@ class BackgroundThreadTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->input = mock(InputInterface::class);
         $this->threadSet = mock(ThreadSetInterface::class, [
             'addThread' => null,

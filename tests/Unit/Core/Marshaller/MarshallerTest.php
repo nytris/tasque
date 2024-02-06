@@ -30,14 +30,11 @@ class MarshallerTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->scheduler = mock(SchedulerInterface::class);
 
         Shared::setScheduler($this->scheduler);
-    }
-
-    public function tearDown(): void
-    {
-        Shared::setScheduler(null);
     }
 
     public function testTockHandlesTockViaTheScheduler(): void

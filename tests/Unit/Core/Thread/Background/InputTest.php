@@ -27,6 +27,8 @@ class InputTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->input = new Input('my value');
     }
 

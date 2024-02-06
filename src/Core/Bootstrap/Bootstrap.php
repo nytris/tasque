@@ -18,7 +18,7 @@ use Asmblah\PhpCodeShift\Shifter\Filter\FileFilter;
 use Asmblah\PhpCodeShift\Shifter\Shift\Shift\Tock\TockStatementShiftSpec;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Expression;
 use Tasque\Core\Marshaller\Marshaller;
 use Tasque\Core\Shared;
@@ -42,6 +42,8 @@ class Bootstrap implements BootstrapInterface
     ) {
         // Exclude Tasque itself from having tock hooks applied.
         $this->codeShift->deny(new FileFilter(dirname(__DIR__, 3) . '/src/**'));
+
+        $this->codeShift->excludeComposerPackageIfInstalled('symfony/error-handler');
     }
 
     /**
@@ -56,7 +58,7 @@ class Bootstrap implements BootstrapInterface
             new TockStatementShiftSpec(
                 fn () => new Expression(
                     new StaticCall(
-                        new Name('\\' . Marshaller::class),
+                        new FullyQualified( Marshaller::class),
                         new Identifier('tock')
                     )
                 )

@@ -44,10 +44,14 @@ class BootstrapTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->codeShift = mock(CodeShiftInterface::class, [
             'deny' => null,
+            'excludeComposerPackageIfInstalled' => null,
             'install' => null,
             'shift' => null,
+            'uninstall' => null,
         ]);
         $this->package = mock(TasquePackageInterface::class, [
             'getSchedulerStrategy' => null,
@@ -59,12 +63,26 @@ class BootstrapTest extends AbstractTestCase
         $this->bootstrap = new Bootstrap($this->codeShift, $this->shutdownHandler);
     }
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->bootstrap->uninstall();
+    }
+
     public function testConstructorAddsDenyRuleForTasqueItself(): void
     {
         $this->codeShift->shouldHaveReceived('deny')
             ->with(Mockery::on(function (FileFilterInterface $fileFilter) {
                 return $fileFilter->fileMatches(dirname(__DIR__, 4) . '/src/Tasque.php');
             }))
+            ->once();
+    }
+
+    public function testConstructorExcludesSymfonyErrorHandlerPackage(): void
+    {
+        $this->codeShift->shouldHaveReceived('excludeComposerPackageIfInstalled')
+            ->with('symfony/error-handler')
             ->once();
     }
 
@@ -105,7 +123,9 @@ class BootstrapTest extends AbstractTestCase
 
     public function testInstallSetsSchedulerStrategyIfConfigured(): void
     {
-        $strategy = mock(StrategyInterface::class);
+        $strategy = mock(StrategyInterface::class, [
+            'handleTock' => null,
+        ]);
         $this->package->allows()
             ->getSchedulerStrategy()
             ->andReturn($strategy);

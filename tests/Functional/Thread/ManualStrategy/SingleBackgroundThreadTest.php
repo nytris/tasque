@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Tasque\Tests\Functional\Thread\ManualStrategy;
 
+use Nytris\Core\Package\PackageContextInterface;
 use Tasque\Core\Scheduler\ContextSwitch\ManualStrategy;
-use Tasque\Core\Shared;
 use Tasque\Tasque;
+use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
 
 /**
@@ -35,14 +36,17 @@ class SingleBackgroundThreadTest extends AbstractTestCase
     {
         $this->tasque = new Tasque();
 
-        Shared::setScheduler(null);
-        Shared::setSchedulerStrategy(new ManualStrategy());
+        Tasque::install(
+            mock(PackageContextInterface::class),
+            mock(TasquePackageInterface::class, [
+                'getSchedulerStrategy' => new ManualStrategy(),
+            ])
+        );
     }
 
     public function tearDown(): void
     {
-        Shared::setScheduler(null);
-        Shared::setSchedulerStrategy(null);
+        Tasque::uninstall();
     }
 
     public function testSingleBackgroundThreadIsScheduledCorrectly(): void

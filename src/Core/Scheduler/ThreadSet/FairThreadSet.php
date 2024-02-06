@@ -17,7 +17,7 @@ use LogicException;
 use SplObjectStorage;
 use SplQueue;
 use Tasque\Core\Thread\Background\BackgroundThreadInterface;
-use Tasque\Core\Thread\MainThread;
+use Tasque\Core\Thread\MainThreadInterface;
 use Tasque\Core\Thread\ThreadInterface;
 
 /**
@@ -34,20 +34,17 @@ class FairThreadSet implements ThreadSetInterface
      * @var SplObjectStorage<ThreadInterface, ThreadInterface>
      */
     private SplObjectStorage $joinedThreadMap;
-    private MainThread $mainThread;
     /**
      * @var SplQueue<ThreadInterface>
      */
     private SplQueue $threadQueue;
 
-    public function __construct()
+    public function __construct(MainThreadInterface $mainThread)
     {
         $this->joinedThreadMap = new SplObjectStorage();
         $this->threadQueue = new SplQueue();
 
-        // Create the special representation of the main thread for scheduling.
-        $this->mainThread = new MainThread();
-        $this->currentThread = $this->mainThread;
+        $this->currentThread = $mainThread;
     }
 
     /**

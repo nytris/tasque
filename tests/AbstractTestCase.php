@@ -15,6 +15,7 @@ namespace Tasque\Tests;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
+use Tasque\Core\Shared;
 
 /**
  * Class AbstractTestCase.
@@ -26,4 +27,15 @@ use PHPUnit\Framework\TestCase as PhpUnitTestCase;
 abstract class AbstractTestCase extends PhpUnitTestCase
 {
     use MockeryPHPUnitIntegration;
+
+    public function setUp(): void
+    {
+        Shared::uninitialise();
+        Shared::initialise();
+    }
+
+    public function tearDown(): void
+    {
+        Shared::uninitialise();
+    }
 }

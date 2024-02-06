@@ -3,6 +3,9 @@
     "type": "project",
     "license": "MIT",
     "autoload": {
+        "files": [
+            "src/bootstrap.php"
+        ],
         "psr-4": {
             "Tasque\\": "src/"
         }
@@ -21,7 +24,8 @@
         "mockery/mockery": "^1.6",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-mockery": "^1.1",
-        "phpunit/phpunit": "^10.2"
+        "phpunit/phpunit": "^10.2",
+        "symfony/error-handler": "^6.4"
     },
     "config": {
         "platform": {

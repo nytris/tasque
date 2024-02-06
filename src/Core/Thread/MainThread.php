@@ -24,7 +24,7 @@ use Throwable;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class MainThread implements ThreadInterface
+class MainThread implements MainThreadInterface
 {
     /**
      * @inheritDoc

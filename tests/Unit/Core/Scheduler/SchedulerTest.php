@@ -32,6 +32,8 @@ class SchedulerTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->strategy = mock(StrategyInterface::class);
         $this->threadSet = mock(ThreadSetInterface::class);
 

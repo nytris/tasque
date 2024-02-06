@@ -32,6 +32,8 @@ class TimeSliceStrategyTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->clock = mock(ClockInterface::class, [
             'getNanoseconds' => 1000, // This is just the initial timestamp.
         ]);

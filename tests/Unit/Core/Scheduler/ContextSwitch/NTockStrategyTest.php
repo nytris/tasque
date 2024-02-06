@@ -30,6 +30,8 @@ class NTockStrategyTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->threadSet = mock(ThreadSetInterface::class, [
             'switchContext' => null,
         ]);

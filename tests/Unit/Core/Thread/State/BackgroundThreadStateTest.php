@@ -31,6 +31,8 @@ class BackgroundThreadStateTest extends AbstractTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->thread = mock(BackgroundThreadInterface::class, [
             'getReturn' => 'my return value',
             'getThrow' => new RuntimeException('Bang! from thread'),

@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque;
 
-use Asmblah\PhpCodeShift\Shifter\Filter\FileFilter;
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
-use Composer\InstalledVersions;
 use Fiber;
 use InvalidArgumentException;
 use Nytris\Core\Package\PackageContextInterface;
@@ -57,9 +55,7 @@ class Tasque implements TasqueInterface
      */
     public static function excludeComposerPackage(string $packageName): void
     {
-        $packageInstallPath = realpath(InstalledVersions::getInstallPath($packageName));
-
-        self::excludeFiles(new FileFilter($packageInstallPath . '/**'));
+        Shared::getCodeShift()->excludeComposerPackage($packageName);
     }
 
     /**
@@ -101,6 +97,8 @@ class Tasque implements TasqueInterface
             );
         }
 
+        Shared::bootstrap();
+        Shared::initialise();
         Shared::getBootstrap()->install($package);
     }
 
@@ -127,7 +125,6 @@ class Tasque implements TasqueInterface
     {
         Shared::getBootstrap()->uninstall();
 
-        Shared::setScheduler(null);
-        Shared::setSchedulerStrategy(null);
+        Shared::uninitialise();
     }
 }
