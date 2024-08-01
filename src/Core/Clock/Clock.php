@@ -25,6 +25,6 @@ class Clock implements ClockInterface
      */
     public function getNanoseconds(): float|int
     {
-        return hrtime(true);
+        return hrtime(as_number: true);
     }
 }
