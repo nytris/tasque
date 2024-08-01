@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  phpunit:
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,6 +18,12 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+
+      - name: Install Composer dependencies
+        run: composer install
+
+      - name: Run tests
+        run: vendor/bin/phpunit
 
   phpstan:
     runs-on: ubuntu-latest
