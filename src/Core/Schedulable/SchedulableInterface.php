@@ -11,19 +11,15 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Scheduler\ContextSwitch;
+namespace Tasque\Core\Schedulable;
 
 /**
- * Interface StrategyInterface.
+ * Interface SchedulableInterface.
  *
- * Schedules background schedulables (threads and hooks).
+ * Threads and hooks that may be scheduled to run by the Scheduler.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface StrategyInterface
+interface SchedulableInterface
 {
-    /**
-     * Handles a tock of the application.
-     */
-    public function handleTock(SwitchableInterface $switchableContext): void;
 }

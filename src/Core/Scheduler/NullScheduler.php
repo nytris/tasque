@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tasque\Core\Scheduler;
 
 use LogicException;
+use Tasque\Core\Hook\HookSetInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 
@@ -28,8 +29,17 @@ use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 class NullScheduler implements SchedulerInterface
 {
     public function __construct(
+        private readonly HookSetInterface $hookSet,
         private readonly StrategyInterface $strategy
     ) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHookSet(): HookSetInterface
+    {
+        return $this->hookSet;
     }
 
     /**

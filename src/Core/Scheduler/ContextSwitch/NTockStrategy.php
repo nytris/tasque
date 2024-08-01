@@ -13,12 +13,10 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Scheduler\ContextSwitch;
 
-use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
-
 /**
  * Class NTockStrategy.
  *
- * Context switches between threads every N tocks.
+ * Context switches between schedulables every N tocks.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
@@ -34,12 +32,12 @@ class NTockStrategy implements StrategyInterface
     /**
      * @inheritDoc
      */
-    public function handleTock(ThreadSetInterface $threadSet): void
+    public function handleTock(SwitchableInterface $switchableContext): void
     {
         $this->currentTock = ($this->currentTock + 1) % $this->tockInterval;
 
         if ($this->currentTock === 0) {
-            $threadSet->switchContext();
+            $switchableContext->switchContext();
         }
     }
 }

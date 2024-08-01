@@ -15,6 +15,9 @@ namespace Tasque;
 
 use Asmblah\PhpCodeShift\Shifter\Filter\FileFilterInterface;
 use Nytris\Core\Package\PackageFacadeInterface;
+use Tasque\Core\Hook\HookInterface;
+use Tasque\Core\Scheduler\ContextSwitch\PromiscuousStrategy;
+use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Thread\Background\InputInterface;
 use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
 
@@ -27,6 +30,18 @@ use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
  */
 interface TasqueInterface extends PackageFacadeInterface
 {
+    /**
+     * Creates but does not yet install a tock hook.
+     *
+     * Tock hooks are able to specify their own scheduling strategy, using the same mechanism
+     * as thread scheduling but configured separately. By default, a PromiscuousStrategy
+     * will be used, so that the callback is invoked after every tock.
+     */
+    public function createTockHook(
+        callable $callback,
+        StrategyInterface $switchingStrategy = new PromiscuousStrategy()
+    ): HookInterface;
+
     /**
      * Creates but does not yet start a background thread.
      *

@@ -14,20 +14,16 @@ declare(strict_types=1);
 namespace Tasque\Core\Scheduler\ContextSwitch;
 
 /**
- * Class ManualStrategy.
+ * Interface SwitchableInterface.
  *
- * Context switches between schedulables only when manually asked.
+ * Represents a context that can be switched to.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class ManualStrategy implements StrategyInterface
+interface SwitchableInterface
 {
     /**
-     * @inheritDoc
+     * Switches to this context.
      */
-    public function handleTock(SwitchableInterface $switchableContext): void
-    {
-        // Do nothing: manual strategy will never context-switch automatically,
-        // Scheduler->switchContext() must be used.
-    }
+    public function switchContext(): void;
 }

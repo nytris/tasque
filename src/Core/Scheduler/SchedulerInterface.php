@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Scheduler;
 
+use Tasque\Core\Hook\HookSetInterface;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 
@@ -25,6 +26,11 @@ use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
  */
 interface SchedulerInterface
 {
+    /**
+     * Fetches the hook set.
+     */
+    public function getHookSet(): HookSetInterface;
+
     /**
      * Fetches the scheduler strategy.
      */

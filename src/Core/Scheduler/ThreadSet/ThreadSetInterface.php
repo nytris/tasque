@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Scheduler\ThreadSet;
 
+use Tasque\Core\Scheduler\ContextSwitch\SwitchableInterface;
 use Tasque\Core\Thread\Background\BackgroundThreadInterface;
 use Tasque\Core\Thread\ThreadInterface;
 
@@ -23,7 +24,7 @@ use Tasque\Core\Thread\ThreadInterface;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface ThreadSetInterface
+interface ThreadSetInterface extends SwitchableInterface
 {
     /**
      * Adds a thread to the set to be run.

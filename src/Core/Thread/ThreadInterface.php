@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tasque\Core\Thread;
 
 use Tasque\Core\Exception\ThreadTerminatedException;
+use Tasque\Core\Schedulable\SchedulableInterface;
 use Tasque\Core\Thread\State\ThreadStateInterface;
 use Throwable;
 
@@ -24,7 +25,7 @@ use Throwable;
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface ThreadInterface extends ThreadStateInterface
+interface ThreadInterface extends SchedulableInterface, ThreadStateInterface
 {
     /**
      * Determines whether this is the main thread.

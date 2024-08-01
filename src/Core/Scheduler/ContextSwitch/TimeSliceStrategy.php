@@ -15,12 +15,11 @@ namespace Tasque\Core\Scheduler\ContextSwitch;
 
 use Tasque\Core\Clock\Clock;
 use Tasque\Core\Clock\ClockInterface;
-use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 
 /**
  * Class TimeSliceStrategy.
  *
- * Schedules background threads based on a time slice limit for each one.
+ * Schedules background schedulables based on a time slice limit for each one.
  * Note that we only check the current high-resolution time every N tocks for efficiency.
  *
  * High-resolution timestamp fetching does not invoke the `gettimeofday()` syscall,
@@ -52,7 +51,7 @@ class TimeSliceStrategy implements StrategyInterface
     /**
      * @inheritDoc
      */
-    public function handleTock(ThreadSetInterface $threadSet): void
+    public function handleTock(SwitchableInterface $switchableContext): void
     {
         $this->currentTock = ($this->currentTock + 1) % $this->timeSliceCheckIntervalTocks;
 
@@ -65,7 +64,7 @@ class TimeSliceStrategy implements StrategyInterface
                 // Calculate the end of the new time slice based on the actual time we are switching.
                 $this->currentTimeSliceEndNanoseconds = $currentNanoseconds + $this->timeSliceLengthNanoseconds;
 
-                $threadSet->switchContext();
+                $switchableContext->switchContext();
             }
         }
     }

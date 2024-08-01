@@ -18,6 +18,11 @@ use Fiber;
 use InvalidArgumentException;
 use Nytris\Core\Package\PackageContextInterface;
 use Nytris\Core\Package\PackageInterface;
+use Tasque\Core\Hook\HookInterface;
+use Tasque\Core\Hook\Tock\TockHook;
+use Tasque\Core\Hook\Tock\TockHookContext;
+use Tasque\Core\Scheduler\ContextSwitch\PromiscuousStrategy;
+use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Shared;
 use Tasque\Core\Thread\Background\BackgroundThread;
 use Tasque\Core\Thread\Background\Input;
@@ -48,6 +53,22 @@ class Tasque implements TasqueInterface
         );
 
         return new BackgroundThreadState($thread);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createTockHook(
+        callable $callback,
+        StrategyInterface $switchingStrategy = new PromiscuousStrategy()
+    ): HookInterface {
+        $scheduler = Shared::getScheduler();
+
+        return new TockHook(
+            $scheduler->getHookSet(),
+            $switchingStrategy,
+            new TockHookContext($callback)
+        );
     }
 
     /**

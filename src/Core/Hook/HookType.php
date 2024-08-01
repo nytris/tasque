@@ -11,19 +11,16 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Core\Scheduler\ContextSwitch;
+namespace Tasque\Core\Hook;
 
 /**
- * Interface StrategyInterface.
+ * Enum HookType.
  *
- * Schedules background schedulables (threads and hooks).
+ * Hooks allow hooking into parts of Tasque and its scheduler.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-interface StrategyInterface
+enum HookType: string
 {
-    /**
-     * Handles a tock of the application.
-     */
-    public function handleTock(SwitchableInterface $switchableContext): void;
+    case TOCK = 'tock';
 }

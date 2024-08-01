@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tasque\Core\Scheduler;
 
+use Tasque\Core\Hook\HookSetInterface;
+use Tasque\Core\Hook\HookType;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 
@@ -26,9 +28,18 @@ use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 class Scheduler implements SchedulerInterface
 {
     public function __construct(
+        private readonly HookSetInterface $hookSet,
         private readonly ThreadSetInterface $threadSet,
         private readonly StrategyInterface $strategy
     ) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHookSet(): HookSetInterface
+    {
+        return $this->hookSet;
     }
 
     /**
@@ -52,6 +63,7 @@ class Scheduler implements SchedulerInterface
      */
     public function handleTock(): void
     {
+        $this->hookSet->invokeHook(HookType::TOCK);
         $this->strategy->handleTock($this->threadSet);
     }
 

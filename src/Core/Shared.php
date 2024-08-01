@@ -17,6 +17,7 @@ use Asmblah\PhpCodeShift\CodeShift;
 use Asmblah\PhpCodeShift\CodeShiftInterface;
 use Tasque\Core\Bootstrap\Bootstrap;
 use Tasque\Core\Bootstrap\BootstrapInterface;
+use Tasque\Core\Hook\HookSet;
 use Tasque\Core\Scheduler\ContextSwitch\ManualStrategy;
 use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 use Tasque\Core\Scheduler\ContextSwitch\TimeSliceStrategy;
@@ -62,7 +63,7 @@ class Shared
 
         // Create the special representation of the main thread for scheduling.
         self::$mainThread = new MainThread();
-        self::$nullScheduler = new NullScheduler(new ManualStrategy());
+        self::$nullScheduler = new NullScheduler(new HookSet(), new ManualStrategy());
     }
 
     /**
@@ -114,7 +115,10 @@ class Shared
         // Never transpile core dependencies which should not need tocks applying to them.
         self::$codeShift->excludeComposerPackage('nytris/nytris');
 
-        self::$scheduler = new Scheduler(new FairThreadSet(self::$mainThread), new TimeSliceStrategy());
+        self::$scheduler = new Scheduler(
+            new HookSet(),
+            new FairThreadSet(self::$mainThread), new TimeSliceStrategy()
+        );
     }
 
     /**
@@ -145,6 +149,7 @@ class Shared
     public static function setScheduler(?SchedulerInterface $scheduler): void
     {
         self::$scheduler = $scheduler ?? new Scheduler(
+            self::$scheduler->getHookSet(),
             self::$scheduler->getThreadSet(),
             self::$scheduler->getStrategy()
         );
@@ -157,7 +162,11 @@ class Shared
      */
     public static function setSchedulerStrategy(?StrategyInterface $strategy): void
     {
-        self::$scheduler = new Scheduler(self::$scheduler->getThreadSet(), $strategy);
+        self::$scheduler = new Scheduler(
+            self::$scheduler->getHookSet(),
+            self::$scheduler->getThreadSet(),
+            $strategy
+        );
     }
 
     /**

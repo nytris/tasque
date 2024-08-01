@@ -14,20 +14,20 @@ declare(strict_types=1);
 namespace Tasque\Core\Scheduler\ContextSwitch;
 
 /**
- * Class ManualStrategy.
+ * Class PromiscuousStrategy.
  *
- * Context switches between schedulables only when manually asked.
+ * Context switches between schedulables every tock.
+ * A more performant version of `NTockStrategy(tockInterval: 1)`.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class ManualStrategy implements StrategyInterface
+class PromiscuousStrategy implements StrategyInterface
 {
     /**
      * @inheritDoc
      */
     public function handleTock(SwitchableInterface $switchableContext): void
     {
-        // Do nothing: manual strategy will never context-switch automatically,
-        // Scheduler->switchContext() must be used.
+        $switchableContext->switchContext();
     }
 }
