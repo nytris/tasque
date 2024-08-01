@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Tasque\Core\Hook\Tock;
 
 use Tasque\Core\Scheduler\ContextSwitch\SwitchableInterface;
+use Tasque\Core\Scheduler\SchedulerInterface;
+use Tasque\Core\Shared;
 
 /**
  * Class TockHookContext.
@@ -25,6 +27,7 @@ use Tasque\Core\Scheduler\ContextSwitch\SwitchableInterface;
 class TockHookContext implements SwitchableInterface
 {
     public function __construct(
+        private readonly SchedulerInterface $nullScheduler,
         /**
          * @var callable
          */
@@ -37,6 +40,15 @@ class TockHookContext implements SwitchableInterface
      */
     public function switchContext(): void
     {
-        ($this->callback)();
+        $scheduler = Shared::getScheduler();
+
+        // Use the null scheduler while invoking the hook to prevent infinite recursion.
+        Shared::setScheduler($this->nullScheduler);
+
+        try {
+            ($this->callback)();
+        } finally {
+            Shared::setScheduler($scheduler);
+        }
     }
 }

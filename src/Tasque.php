@@ -63,11 +63,12 @@ class Tasque implements TasqueInterface
         StrategyInterface $switchingStrategy = new PromiscuousStrategy()
     ): HookInterface {
         $scheduler = Shared::getScheduler();
+        $nullScheduler = Shared::getNullScheduler();
 
         return new TockHook(
             $scheduler->getHookSet(),
             $switchingStrategy,
-            new TockHookContext($callback)
+            new TockHookContext($nullScheduler, $callback)
         );
     }
 

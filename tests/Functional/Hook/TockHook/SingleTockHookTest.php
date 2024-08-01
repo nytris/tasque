@@ -21,6 +21,7 @@ use Tasque\TasquePackageInterface;
 use Tasque\Tests\AbstractTestCase;
 use Tasque\Tests\Functional\Harness\Log;
 use Tasque\Tests\Functional\Harness\TockHook\SimpleMainThread;
+use Tasque\Tests\Functional\Harness\TockHook\TockHandler;
 
 /**
  * Class SingleTockHookTest.
@@ -89,6 +90,66 @@ class SingleTockHookTest extends AbstractTestCase
                 'Tock hook invoked',
                 'Main thread loop iteration #2',
                 'Tock hook invoked',
+                'Main thread loop iteration #3',
+
+                'End of main thread run',
+            ],
+            $this->log->getLog()
+        );
+    }
+
+    public function testFurtherTocksAreDisabledDuringTockHookInvocation(): void
+    {
+        $this->log->log('Start');
+
+        $this->log->log('Before hook creation');
+        $hook = $this->tasque->createTockHook(function () {
+            $this->log->log('Tock hook invocation start');
+            (new TockHandler($this->log))->handle();
+            $this->log->log('Tock hook invocation end');
+        });
+        $this->log->log('After hook creation');
+
+        $this->log->log('Before hook installation');
+        $hook->install();
+        $this->log->log('After hook installation');
+
+        (
+        new SimpleMainThread($this->log)
+        )->run();
+
+        static::assertEquals(
+            [
+                'Start',
+
+                'Before hook creation',
+                'After hook creation',
+                'Before hook installation',
+                'After hook installation',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
+
+                'Start of main thread run',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
+
+                'Main thread loop iteration #0',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
+                'Main thread loop iteration #1',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
+                'Main thread loop iteration #2',
+                'Tock hook invocation start',
+                'Inside TockHandler',
+                'Tock hook invocation end',
                 'Main thread loop iteration #3',
 
                 'End of main thread run',

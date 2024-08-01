@@ -45,8 +45,8 @@ class Shared
     private static bool $bootstrapped = false;
     private static ?CodeShiftInterface $codeShift = null;
     private static bool $initialised = false;
-    private static ?MainThreadInterface $mainThread = null;
-    private static ?SchedulerInterface $nullScheduler = null;
+    private static MainThreadInterface $mainThread;
+    private static SchedulerInterface $nullScheduler;
     private static ?SchedulerInterface $scheduler = null;
 
     /**
@@ -80,6 +80,14 @@ class Shared
     public static function getCodeShift(): CodeShiftInterface
     {
         return self::$codeShift;
+    }
+
+    /**
+     * Fetches the null Scheduler.
+     */
+    public static function getNullScheduler(): SchedulerInterface
+    {
+        return self::$nullScheduler;
     }
 
     /**
