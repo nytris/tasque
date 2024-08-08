@@ -15,6 +15,7 @@ namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
 
 use Tasque\TasqueInterface;
 use Tasque\Tests\Functional\Harness\Log;
+use Tasque\Tests\Functional\Harness\TestBackgroundThreadInterface;
 
 /**
  * Class TinyMainThread.

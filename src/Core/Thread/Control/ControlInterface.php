@@ -38,4 +38,10 @@ interface ControlInterface
      * rather than just recording them.
      */
     public function shout(): void;
+
+    /**
+     * Terminates the thread. Note that it may not currently be the running one,
+     * in which case it will simply never be scheduled again and its resources (Fiber etc.) freed.
+     */
+    public function terminate(): void;
 }

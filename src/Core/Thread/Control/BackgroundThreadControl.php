@@ -61,4 +61,12 @@ class BackgroundThreadControl implements InternalControlInterface
     {
         $this->thread->shout();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function terminate(): void
+    {
+        $this->thread->terminate();
+    }
 }

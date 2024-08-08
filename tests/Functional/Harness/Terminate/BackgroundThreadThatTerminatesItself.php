@@ -11,23 +11,22 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
+namespace Tasque\Tests\Functional\Harness\Terminate;
 
 use Tasque\Core\Thread\Control\InternalControlInterface;
 use Tasque\Tests\Functional\Harness\Log;
 use Tasque\Tests\Functional\Harness\TestBackgroundThreadInterface;
 
 /**
- * Class SimpleBackgroundThread.
- *
- * Used by NTockStrategy tests.
+ * Class BackgroundThreadThatTerminatesItself.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class SimpleBackgroundThread implements TestBackgroundThreadInterface
+class BackgroundThreadThatTerminatesItself implements TestBackgroundThreadInterface
 {
     public function __construct(
-        private readonly Log $log
+        private readonly Log $log,
+        private readonly int $terminateAtIteration
     ) {
     }
 
@@ -37,6 +36,10 @@ class SimpleBackgroundThread implements TestBackgroundThreadInterface
 
         for ($i = 0; $i < 4; $i++) {
             $this->log->log('Background thread loop iteration #' . $i);
+
+            if ($i === $this->terminateAtIteration) {
+                $threadControl->terminate();
+            }
         }
 
         $this->log->log('End of background thread run');

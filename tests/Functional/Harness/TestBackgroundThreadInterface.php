@@ -11,16 +11,16 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
+namespace Tasque\Tests\Functional\Harness;
+
+use Tasque\Core\Thread\Control\InternalControlInterface;
 
 /**
  * Interface TestBackgroundThreadInterface.
- *
- * Used by NTockStrategy\SingleBackgroundThreadTest.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
 interface TestBackgroundThreadInterface
 {
-    public function run(): void;
+    public function run(InternalControlInterface $threadControl): void;
 }

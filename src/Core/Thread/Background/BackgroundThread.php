@@ -43,6 +43,11 @@ class BackgroundThread implements BackgroundThreadInterface
      * rather than only recording them.
      */
     private bool $shout = false;
+    /**
+     * Whether the background thread has been explicitly terminated. Fibers cannot be
+     * explicitly terminated, so instead we set this flag to ensure it is never scheduled again.
+     */
+    private bool $terminated = false;
 
     /**
      * @param ThreadSetInterface $threadSet
@@ -127,7 +132,7 @@ class BackgroundThread implements BackgroundThreadInterface
      */
     public function isTerminated(): bool
     {
-        return $this->fiber->isTerminated();
+        return $this->terminated || $this->fiber->isTerminated();
     }
 
     /**
@@ -254,5 +259,23 @@ class BackgroundThread implements BackgroundThreadInterface
         }
 
         return true; // Allow the context switch.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function terminate(): void
+    {
+        $this->terminated = true;
+
+        if ($this->threadSet->getCurrentThread() === $this) {
+            /*
+             * This thread is currently executing: we have marked it as terminated above, which means
+             * that it will never be scheduled again, but we now need to stop it executing any further.
+             *
+             * Therefore, switching away now means that it will never execute again.
+             */
+            $this->threadSet->switchContext();
+        }
     }
 }

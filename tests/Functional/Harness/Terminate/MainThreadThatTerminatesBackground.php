@@ -11,18 +11,23 @@
 
 declare(strict_types=1);
 
-namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
+namespace Tasque\Tests\Functional\Harness\Terminate;
 
 use Tasque\TasqueInterface;
 use Tasque\Tests\Functional\Harness\Log;
 use Tasque\Tests\Functional\Harness\TestBackgroundThreadInterface;
 
 /**
- * Class SimpleMainThread.
+ * Class MainThreadThatTerminatesBackground.
+ *
+ * Used by Thread\TerminateTest.
+ *
+ * Starts a background thread and then later terminates that background thread early,
+ * before it has completed its work.
  *
  * @author Dan Phillimore <dan@ovms.co>
  */
-class SimpleMainThread
+class MainThreadThatTerminatesBackground
 {
     public function __construct(
         private readonly TasqueInterface $tasque,
@@ -44,6 +49,10 @@ class SimpleMainThread
 
         for ($i = 0; $i < 4; $i++) {
             $this->log->log('Main thread loop iteration #' . $i);
+
+            if ($i === 2) {
+                $backgroundThread->terminate();
+            }
         }
 
         $this->log->log('Before join');

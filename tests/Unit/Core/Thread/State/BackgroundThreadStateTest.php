@@ -123,4 +123,13 @@ class BackgroundThreadStateTest extends AbstractTestCase
 
         $this->state->start();
     }
+
+    public function testTerminateTerminatesTheThread(): void
+    {
+        $this->thread->expects()
+            ->terminate()
+            ->once();
+
+        $this->state->terminate();
+    }
 }

@@ -24,6 +24,7 @@ use Tasque\Core\Scheduler\ThreadSet\ThreadSetInterface;
 use Tasque\Core\Thread\Background\BackgroundThread;
 use Tasque\Core\Thread\Background\InputInterface;
 use Tasque\Core\Thread\Control\InternalControlInterface;
+use Tasque\Core\Thread\ThreadInterface;
 use Tasque\Tests\AbstractTestCase;
 
 /**
@@ -266,5 +267,54 @@ class BackgroundThreadTest extends AbstractTestCase
             ->once();
 
         $this->thread->start();
+    }
+
+    public function testTerminateMarksTheThreadAsTerminatedWhenThisThreadIsCurrent(): void
+    {
+        $this->threadSet->allows()
+            ->getCurrentThread()
+            ->andReturn($this->thread);
+        $this->threadSet->allows()
+            ->switchContext();
+
+        $this->thread->terminate();
+
+        static::assertTrue($this->thread->isTerminated());
+    }
+
+    public function testTerminateMarksTheThreadAsTerminatedWhenThisThreadIsNotCurrent(): void
+    {
+        $this->threadSet->allows()
+            ->getCurrentThread()
+            ->andReturn(mock(ThreadInterface::class));
+
+        $this->thread->terminate();
+
+        static::assertTrue($this->thread->isTerminated());
+    }
+
+    public function testTerminateSwitchesContextWhenThisThreadIsCurrent(): void
+    {
+        $this->threadSet->allows()
+            ->getCurrentThread()
+            ->andReturn($this->thread);
+
+        $this->threadSet->expects()
+            ->switchContext()
+            ->once();
+
+        $this->thread->terminate();
+    }
+
+    public function testTerminateDoesNotSwitchContextWhenThisThreadIsNotCurrent(): void
+    {
+        $this->threadSet->allows()
+            ->getCurrentThread()
+            ->andReturn(mock(ThreadInterface::class));
+
+        $this->threadSet->expects('switchContext')
+            ->never();
+
+        $this->thread->terminate();
     }
 }

@@ -93,4 +93,12 @@ class BackgroundThreadState implements BackgroundThreadStateInterface
     {
         $this->thread->start();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function terminate(): void
+    {
+        $this->thread->terminate();
+    }
 }

@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Tasque\Tests\Functional\Harness\SingleBackgroundThread;
 
+use Tasque\Core\Thread\Control\InternalControlInterface;
 use Tasque\Tests\Functional\Harness\Log;
+use Tasque\Tests\Functional\Harness\TestBackgroundThreadInterface;
 
 /**
  * Class BackgroundThreadWithDestructor.
@@ -29,7 +31,7 @@ class BackgroundThreadWithDestructor implements TestBackgroundThreadInterface
     ) {
     }
 
-    public function run(): void
+    public function run(InternalControlInterface $threadControl): void
     {
         $this->log->log('Start of background thread run');
 

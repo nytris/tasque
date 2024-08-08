@@ -17,6 +17,7 @@ use Tasque\Core\Thread\State\BackgroundThreadStateInterface;
 use Tasque\Tasque;
 use Tasque\TasqueInterface;
 use Tasque\Tests\Functional\Harness\Log;
+use Tasque\Tests\Functional\Harness\TestBackgroundThreadInterface;
 
 /**
  * Class MainThreadWithDestructorDuringBackgroundThreadStart.

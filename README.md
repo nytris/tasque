@@ -83,6 +83,62 @@ $backgroundThreadResult = $thread->getReturn();
 print 'Background thread result: "' . $backgroundThreadResult . '"';
 ```
 
+### Terminating a thread
+
+A background thread can be terminated from outside, e.g.:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Tasque\Tasque;
+
+// ...
+
+$tasque = new Tasque();
+
+$thread = $tasque->createThread(
+    function () {
+        // ...
+    }
+);
+$thread->start();
+
+// ...
+
+// Terminate the background thread, leaving the current thread still running,
+// which may be the main thread or another background thread.
+$thread->terminate();
+```
+
+or from inside:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Tasque\Core\Thread\Control\InternalControlInterface;
+use Tasque\Tasque;
+
+// ...
+
+$tasque = new Tasque();
+
+$thread = $tasque->createThread(
+    function (InternalControlInterface $threadControl) {
+        // ...
+
+        // Terminate this background thread. No further logic will execute inside it.
+        $threadControl->terminate();
+
+        // Any code here will not be reached.
+    }
+);
+$thread->start();
+```
+
 ## Limitations
 
 - Threads can only be handled once `Tasque` itself has been able to initialise.
