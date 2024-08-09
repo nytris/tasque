@@ -40,6 +40,7 @@ class SingleBackgroundThreadTest extends AbstractTestCase
             mock(PackageContextInterface::class),
             mock(TasquePackageInterface::class, [
                 'getSchedulerStrategy' => new ManualStrategy(),
+                'isPreemptive' => true,
             ])
         );
     }

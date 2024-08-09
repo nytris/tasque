@@ -53,17 +53,19 @@ class Bootstrap implements BootstrapInterface
     {
         $this->codeShift->install();
 
-        // Register a "tock" shift so that we can preemptively context-switch between threads.
-        $this->codeShift->shift(
-            new TockStatementShiftSpec(
-                fn () => new Expression(
-                    new StaticCall(
-                        new FullyQualified( Marshaller::class),
-                        new Identifier('tock')
+        if ($packageConfig->isPreemptive()) {
+            // Register a "tock" shift so that we can preemptively context-switch between threads.
+            $this->codeShift->shift(
+                new TockStatementShiftSpec(
+                    fn () => new Expression(
+                        new StaticCall(
+                            new FullyQualified(Marshaller::class),
+                            new Identifier('tock')
+                        )
                     )
                 )
-            )
-        );
+            );
+        }
 
         $schedulerStrategy = $packageConfig->getSchedulerStrategy();
 

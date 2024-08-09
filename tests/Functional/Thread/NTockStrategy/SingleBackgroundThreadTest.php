@@ -46,6 +46,7 @@ class SingleBackgroundThreadTest extends AbstractTestCase
         $this->log = new Log();
         $this->package = mock(TasquePackageInterface::class, [
             'getSchedulerStrategy' => new NTockStrategy(1),
+            'isPreemptive' => true,
         ]);
         $this->packageContext = mock(PackageContextInterface::class);
         $this->tasque = new Tasque();

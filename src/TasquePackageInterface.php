@@ -29,4 +29,9 @@ interface TasquePackageInterface extends PackageInterface
      * Fetches the configured scheduler strategy to use, if set.
      */
     public function getSchedulerStrategy(): ?StrategyInterface;
+
+    /**
+     * Whether to install preemptive context switching via tocks.
+     */
+    public function isPreemptive(): bool;
 }

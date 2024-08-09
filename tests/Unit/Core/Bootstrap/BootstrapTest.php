@@ -55,6 +55,7 @@ class BootstrapTest extends AbstractTestCase
         ]);
         $this->package = mock(TasquePackageInterface::class, [
             'getSchedulerStrategy' => null,
+            'isPreemptive' => true,
         ]);
         $this->shutdownHandler = mock(ShutdownHandlerInterface::class, [
             'install' => null,
@@ -95,7 +96,7 @@ class BootstrapTest extends AbstractTestCase
         $this->bootstrap->install($this->package);
     }
 
-    public function testInstallAddsATockShiftForMarshaller(): void
+    public function testInstallAddsATockShiftForMarshallerWhenPreemptive(): void
     {
         $this->codeShift->expects()
             ->shift(Mockery::type(TockStatementShiftSpec::class))
@@ -117,6 +118,19 @@ class BootstrapTest extends AbstractTestCase
                 static::assertInstanceOf(Identifier::class, $methodNameNode);
                 static::assertSame('tock', $methodNameNode->name);
             });
+
+        $this->bootstrap->install($this->package);
+    }
+
+    public function testInstallAddsATockShiftForMarshallerWhenNotPreemptive(): void
+    {
+        $this->package->allows()
+            ->isPreemptive()
+            ->andReturnFalse();
+
+        $this->codeShift->expects()
+            ->shift(Mockery::type(TockStatementShiftSpec::class))
+            ->never();
 
         $this->bootstrap->install($this->package);
     }

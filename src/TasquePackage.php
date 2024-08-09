@@ -25,7 +25,8 @@ use Tasque\Core\Scheduler\ContextSwitch\StrategyInterface;
 class TasquePackage implements TasquePackageInterface
 {
     public function __construct(
-        private readonly ?StrategyInterface $schedulerStrategy = null
+        private readonly ?StrategyInterface $schedulerStrategy = null,
+        private readonly bool $preemptive = true
     ) {
     }
 
@@ -43,5 +44,13 @@ class TasquePackage implements TasquePackageInterface
     public function getSchedulerStrategy(): ?StrategyInterface
     {
         return $this->schedulerStrategy;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isPreemptive(): bool
+    {
+        return $this->preemptive;
     }
 }
